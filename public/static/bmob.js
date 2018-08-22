@@ -9,7 +9,6 @@
  * Released under the MIT license.
  */
 (function(root) {
-  console.log(this);
   root.Bmob = root.Bmob || {};
   root.Bmob.VERSION = "js0.0.1";
 }(this));

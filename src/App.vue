@@ -23,6 +23,28 @@
   </div>
 </template>
 
+<script>
+  import Storage from './assets/utils/Storage';
+  import globalData from './assets/utils/globalData';
+
+  export default {
+    name: 'App',
+    created() {
+      Storage.queryBmob(
+        'MusicTag',
+        (q) => {
+          q.equalTo('username', '游客');
+          return q;
+        },
+        (res) => {
+          globalData.sysTags = res.tags;
+          globalData.sysSongs = res.songs;
+        }
+      )
+    }
+  }
+</script>
+
 <style lang="scss">
   #app {
     min-height: 100vh;
@@ -56,6 +78,7 @@
       display: inline-block;
       vertical-align: top;
       padding: 20px;
+      width: calc(100% - 220px);
     }
   }
 
