@@ -28,11 +28,20 @@
     data() {
       return {
         tag: '',
-        tags: this.$store.state.sysTags,
+        tags: [],
         tagOwner: '系统'
       }
     },
+    mounted() {
+      this.getTags();
+    },
     methods: {
+      getTags() {
+        if (!this.$store.state.sysTags.length) {
+          setTimeout(this.getTags, 100);
+        }
+        this.tags = this.$store.state.sysTags;
+      },
       selectTag(tag) {
         this.tag = tag;
       },

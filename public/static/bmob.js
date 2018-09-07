@@ -1326,7 +1326,7 @@
   };
 
   // Set the server for Bmob to talk to.
-  Bmob.serverURL = "https://api.bmob.cn";
+  Bmob.serverURL = "https://api2.bmob.cn";
   // Bmob.serverURL = "http://192.168.1.60:8080";
   Bmob.fileURL = "http://file.bmob.cn";
 
@@ -1488,10 +1488,6 @@
       xhr.upload.addEventListener("progress", progress, false);
     }
     xhr.onreadystatechange = function() {
-      // 关闭loading
-      var loading = document.getElementById('xhr-loading');
-      loading.style.display = 'none';
-
       if (xhr.readyState === 4) {
         if (handled) {
           return;
@@ -1540,8 +1536,6 @@
                            "Bmob/" + Bmob.VERSION +
                            " (NodeJS " + process.versions.node + ")");
     }
-    var loading = document.getElementById('xhr-loading');
-    loading.style.display = 'block';
     xhr.send(data);
     return promise._thenRunCallbacks(options);
   };

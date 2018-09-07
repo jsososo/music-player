@@ -37,45 +37,41 @@
       }
     },
     created() {
-      this.updateList();
+      this.updateList(true);
     },
     methods: {
-      updateList() {
+      updateList(isFirst) {
         const state = this.$store.state;
+        if (!Object.values(state.allSongs).length) {
+          setTimeout(this.updateList, 100);
+        }
         let list = [];
         let tagObj = {};
         if (this.isSys) {
           tagObj = state.sysSongs;
         }
         if (this.tag) {
-          list = tagObj[this.tag].map((id) => state.allSongs[id]);
+          const arr = tagObj[this.tag] || [];
+          list = arr.map((id) => state.allSongs[id]);
         } else {
           list = Object.values(state.allSongs);
         }
         this.list = list;
-      },
-      playMusic(id) {
-        const state = this.$store.state
-        if (!state.allSongs[id].url) {
-          this.getMusicInfo(id, (res) => {
-            state.allSongs[id] = res;
-            if (res.objectId === state.playNow.objectId) {
-              this.$store.commit('updatePlayNow', res);
-            }
-          })
+        if (isFirst) {
+          this.playMusic(Object.keys(state.allSongs)[0], false);
         }
-        this.$store.commit('updatePlayNow', state.allSongs[id]);
       },
-      getMusicInfo(id, cb) {
-        Storage.queryBmob(
-          'MusicSongs',
-          (q) => {
-            q.equalTo('objectId', id);
-            return q;
-          },
-          cb,
-        )
-      }
+      playMusic(id, play = true) {
+        const state = this.$store.state;
+        if (play) {
+          this.$store.state.playing = true;
+        }
+        const list = this.list.map(item => item.objectId);
+        this.$store.commit('updatePlayNow', {
+          obj: state.allSongs[id],
+          list,
+        });
+      },
     }
   }
 </script>

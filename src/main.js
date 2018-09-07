@@ -19,19 +19,31 @@ const store = new Vuex.Store({
     sysTags: [],
     allSongs: {},
     playNow: {},
+    playing: false,
+    playingList: [],
     playerInfo: {
       duration: 0,
       current: 0,
       paused: true,
     },
+    loading: false,
   },
   mutations: {
-    updatePlayNow(state, obj) {
-      state.playNow = obj;
+    updatePlayNow(state, data) {
+      state.playNow = data.obj;
+      state.playingList = data.list || state.playingList;
     },
     updatePlayer(state, obj) {
       state.playerInfo = obj;
-    }
+    },
+    playNext(state) {
+      const id = state.playNow.objectId;
+      let nI = state.playingList.indexOf(id) + 1;
+      if (nI === state.playingList.length) {
+        nI = 0;
+      }
+      state.playNow = state.allSongs[state.playingList[nI]];
+    },
   }
 });
 

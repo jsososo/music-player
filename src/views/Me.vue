@@ -1,6 +1,6 @@
 <template>
   <div>
-    <a href="#/upload">
+    <a href="#/me/upload">
       <el-button>自己上传一哈</el-button>
     </a>
   </div>

@@ -1,14 +1,14 @@
 <template>
   <div id="app">
     <div class="left-menu">
-      <el-menu default-active="/" :router="true" >
-        <el-menu-item index="me">
+      <el-menu :default-active="`/${defaultActive}`" :router="true" >
+        <el-menu-item index="/me">
           <icon name="user"/>
         </el-menu-item>
         <el-menu-item index="/">
           <icon name="play-circle"/>
         </el-menu-item>
-        <el-menu-item index="storehouse">
+        <el-menu-item index="/storehouse">
           <icon name="hdd"/>
         </el-menu-item>
         <a class="text-center block fc_999 mt_10" target="_blank" href="//jsososo.com">
@@ -30,7 +30,13 @@
   export default {
     name: 'App',
     components: { Player },
+    data() {
+      return {
+        defaultActive: '/',
+      }
+    },
     created() {
+      this.defaultActive = window.location.hash.split('/')[1];
       Storage.queryBmob(
         'MusicTag',
         (q) => {
@@ -57,7 +63,7 @@
         },
         null,
         'find'
-      )
+      );
     },
   }
 </script>
@@ -85,6 +91,7 @@
 
         &.is-active {
           color: #409EFF;
+          background: #ecf5ff;
         }
       }
 

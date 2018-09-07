@@ -25,7 +25,7 @@ const router = new Router({
       component: () => import(/* webpackChunkName: "about" */ './views/About.vue')
     },
     {
-      path: '/upload',
+      path: '/me/upload',
       name: 'upload',
       meta: {
         title: '上传'
