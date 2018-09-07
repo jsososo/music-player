@@ -2,15 +2,20 @@
   <div class="up-file-list">
     <div class="up-file-item" v-for="(f, i) in upList" :key="f.uid">
       <div class="img-container">
-        <img class="file-img" v-if="f.img" :src="f.img" alt="">
-        <div class="img-cover fc_blue">
+        <img class="file-img" v-if="f.img" :src="f.img">
+        <div class="img-cover fc_blue" @click="changeCover(i)">
           换个图片
+          <input style="display: none;" type="file" :id="`up-cover-${i}`" @change="uploadImg">
         </div>
       </div>
       <div class="info-container">
         <div class="input-line">
           歌名：<el-input class="input-box" v-model="f.title" />
           歌手：<el-input class="input-box"  v-model="f.artist" />
+        </div>
+        <div class="input-line">
+          专辑：<el-input class="input-box" v-model="f.album" />
+          搜索：<el-input class="input-box" v-model="f.search" />
         </div>
         <div class="input-line">
           标签：
@@ -30,9 +35,6 @@
           </el-option>
         </el-select>
         </div>
-        <div class="input-line">
-          专辑：<el-input class="input-box" v-model="f.album" />
-        </div>
         <el-button v-if="!f.uploading" class="up-btn" @click="upload(i)">上传吧</el-button>
         <div class="up-progress" v-if="f.uploading">
           <div class="up-progress-green" :style="`width: ${f.progress}%`"></div>
@@ -46,7 +48,6 @@
 
 <script>
   import Storage from '../assets/utils/Storage';
-  import globalData from '../assets/utils/globalData';
   import Num from '../assets/utils/num';
   export default {
     name: "uploadInfo",
@@ -57,35 +58,66 @@
       return {
         upList: this.list,
         upCount: 0,
-        tags: globalData.sysTags,
+        tags: this.$store.state.sysTags,
+        selectIndex: 0, // 选择图片的index
       }
-    },
-    created() {
-      this.tags = globalData.sysTags;
     },
     methods: {
       upload(index) {
+        const state = this.$store.state;
         const obj = this.upList[index];
         obj.uploading = true;
         obj.className = 'icon-result el-icon-loading';
+        // 上传文件
         Storage.saveFile(obj.file, (res) => {
+          // 上传成功后在 MusicSongs 表里记录音乐信息
+          const params = {
+            url: res.url,
+            album: obj.album,
+            cover: obj.img,
+            title: obj.title,
+            artist: obj.artist,
+            search: obj.search,
+          };
           Storage.createBmob(
             'MusicSongs',
-            {
-              url: res.url,
-              album: obj.album,
-              cover: obj.img,
-              tags: obj.tag,
-              title: obj.title,
-              artist: obj.artist,
-            },
-            () => {
+            params,
+            (s) => {
+              obj.tag.forEach((t) => {
+                if (!state.sysSongs[t]) {
+                  state.sysTags.push(t);
+                  state.sysSongs[t] = [];
+                }
+                state.sysSongs[t].push(s.id);
+              });
+              params.objectId = s.id;
+              state.allSongs[s.id] = params;
+              // 更新系统tag
+              Storage.setBmob(
+                'MusicTag',
+                state.sysObjectId,
+                {
+                  tags: state.sysSongs,
+                }
+              );
               obj.className = 'icon-result el-icon-success'
             },
           )
         }, (p) => {
+          // 上传进度
           obj.progress = Num(p.loaded / p.total * 100, 2);
         })
+      },
+      changeCover(i) {
+        const id = `up-cover-${i}`;
+        const input = document.getElementById(id);
+        this.selectIdex = i;
+        input.click();
+      },
+      uploadImg(e) {
+        const reader = new FileReader();
+        reader.readAsDataURL(e.path[0].files[0]);
+        reader.onload = () => this.upList[this.selectIndex].img = reader.result;
       }
     }
   }

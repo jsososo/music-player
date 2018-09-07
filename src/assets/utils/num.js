@@ -7,7 +7,7 @@
 
 const num = (a, b = 0, c = 0) => {
   a = Number(a || 0);
-  const d = 0.5;
+  const d = 0.499999999;
   return Number((a + (c * d)).toFixed(b));
 };
 

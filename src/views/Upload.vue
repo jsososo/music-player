@@ -54,6 +54,7 @@
             uploading: false,
             tag: [],
             className: '',
+            search: '',
           };
           if (tag.image && tag.image.data) {
             fileInfo.img = u8ToBase64(tag.image.data);

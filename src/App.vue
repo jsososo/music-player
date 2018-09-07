@@ -1,58 +1,77 @@
 <template>
   <div id="app">
     <div class="left-menu">
-      <div>hello world</div>
       <el-menu default-active="/" :router="true" >
         <el-menu-item index="me">
           <icon name="user"/>
-          <span slot="title">我   的</span>
         </el-menu-item>
         <el-menu-item index="/">
           <icon name="play-circle"/>
-          <span slot="title">播放器</span>
         </el-menu-item>
         <el-menu-item index="storehouse">
           <icon name="hdd"/>
-          <span slot="title">曲   库</span>
         </el-menu-item>
+        <a class="text-center block fc_999 mt_10" target="_blank" href="//jsososo.com">
+          <span target="_blank">So</span>
+        </a>
       </el-menu>
     </div>
     <div class="main-container">
       <router-view/>
+      <Player />
     </div>
   </div>
 </template>
 
 <script>
   import Storage from './assets/utils/Storage';
-  import globalData from './assets/utils/globalData';
+  import Player from './components/Player';
 
   export default {
     name: 'App',
+    components: { Player },
     created() {
       Storage.queryBmob(
         'MusicTag',
         (q) => {
-          q.equalTo('username', '游客');
+          q.equalTo('userId', 'a605fbce83');
           return q;
         },
         (res) => {
-          globalData.sysTags = res.tags;
-          globalData.sysSongs = res.songs;
+          this.$store.state.sysObjectId = res.objectId;
+          this.$store.state.sysSongs = res.tags;
+          this.$store.state.sysTags = Object.keys(res.tags);
+
         }
+      );
+      Storage.queryBmob(
+        'MusicSongs',
+        (q) => {
+          q.select('artist', 'album', 'title');
+          return q;
+        },
+        (res) => {
+          const allSongs = {};
+          res.forEach((item) => allSongs[item.objectId] = item);
+          this.$store.state.allSongs = allSongs;
+        },
+        null,
+        'find'
       )
-    }
+    },
   }
 </script>
 
 <style lang="scss">
+  @import "assets/style/common";
   #app {
     min-height: 100vh;
 
     .left-menu {
       min-height: 100vh;
-      width: 170px;
+      width: 80px;
       display: inline-block;
+      height: 100%;
       border-right: solid 1px #e6e6e6;
       vertical-align: top;
 
@@ -62,7 +81,7 @@
 
       .el-menu-item {
         color: #999;
-        white-space: pre;
+        padding-left: 0;
 
         &.is-active {
           color: #409EFF;
@@ -70,485 +89,15 @@
       }
 
       .fa-icon {
-        padding-right: 25px;
-        padding-left: 10px;
+        padding: 0 10px;
       }
     }
     .main-container {
       display: inline-block;
       vertical-align: top;
       padding: 20px;
-      width: calc(100% - 220px);
+      width: calc(100% - 130px);
+      padding-bottom: 100px;
     }
   }
-
-  body, div, dl, dt, dd, ul, ol, li, h1, h2, h3, h4, h5, h6, pre, code, form, fieldset, legend, p, blockquote, hr, button, article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
-    margin: 0;
-    padding: 0
-  }
-
-  .w_100 {
-    width: 100px;
-  }
-
-  .w_50 {
-    width: 50px;
-  }
-
-  .w_150 {
-    width: 150px;
-  }
-
-  .w_200 {
-    width: 200px;
-  }
-
-  i, .icon {
-    display: inline-block;
-    vertical-align: inherit
-  }
-
-  .mt_5 {
-    margin-top: 5px !important
-  }
-
-  .mt_8 {
-    margin-top: 8px !important
-  }
-
-  .mt_10 {
-    margin-top: 10px !important
-  }
-
-  .mt_15 {
-    margin-top: 15px !important
-  }
-
-  .mt_20 {
-    margin-top: 20px !important
-  }
-
-  .mt_25 {
-    margin-top: 25px !important
-  }
-
-  .mt_30 {
-    margin-top: 30px !important
-  }
-
-  .mt_40 {
-    margin-top: 40px !important
-  }
-
-  .mb_5 {
-    margin-bottom: 5px !important
-  }
-
-  .mb_10 {
-    margin-bottom: 10px !important
-  }
-
-  .mb_15 {
-    margin-bottom: 15px !important
-  }
-
-  .mb_20 {
-    margin-bottom: 20px !important
-  }
-
-  .mb_40 {
-    margin-bottom: 40px !important
-  }
-
-  .mr_5 {
-    margin-right: 5px !important
-  }
-
-  .mr_10 {
-    margin-right: 10px !important
-  }
-
-  .mr_15 {
-    margin-right: 15px !important
-  }
-
-  .mr_20 {
-    margin-right: 20px !important
-  }
-
-  .ml_5 {
-    margin-left: 5px !important
-  }
-
-  .ml_4 {
-    margin-left: 4px !important
-  }
-
-  .ml_8 {
-    margin-left: 8px !important
-  }
-
-  .ml_10 {
-    margin-left: 10px !important
-  }
-
-  .ml_15 {
-    margin-left: 15px !important
-  }
-
-  .ml_20 {
-    margin-left: 20px !important
-  }
-
-  .ml_30 {
-    margin-left: 30px !important
-  }
-
-  .mg_5 {
-    margin: 5px !important
-  }
-
-  .mg_10 {
-    margin: 10px !important
-  }
-
-  .mg_15 {
-    margin: 15px !important
-  }
-
-  .mg_20 {
-    margin: 20px !important
-  }
-
-  .pt_5 {
-    padding-top: 5px !important
-  }
-
-  .pt_10 {
-    padding-top: 10px !important
-  }
-
-  .pt_15 {
-    padding-top: 15px !important
-  }
-
-  .pt_20 {
-    padding-top: 20px !important
-  }
-
-  .pt_25 {
-    padding-top: 25px !important
-  }
-
-  .pt_30 {
-    padding-top: 30px !important
-  }
-
-  .pb_5 {
-    padding-bottom: 5px !important
-  }
-
-  .pb_10 {
-    padding-bottom: 10px
-  }
-
-  .pb_15 {
-    padding-bottom: 15px !important
-  }
-
-  .pb_20 {
-    padding-bottom: 20px !important
-  }
-
-  .pr_5 {
-    padding-right: 5px !important
-  }
-
-  .pr_10 {
-    padding-right: 10px !important
-  }
-
-  .pr_15 {
-    padding-right: 15px !important
-  }
-
-  .pr_20 {
-    padding-right: 20px !important
-  }
-
-  .pl_5 {
-    padding-left: 5px !important
-  }
-
-  .pl_10 {
-    padding-left: 10px !important
-  }
-
-  .pl_15 {
-    padding-left: 15px !important
-  }
-
-  .pl_20 {
-    padding-left: 20px !important
-  }
-
-  .pd_5 {
-    padding: 5px !important
-  }
-
-  .pd_10 {
-    padding: 10px !important
-  }
-
-  .pd_15 {
-    padding: 15px !important
-  }
-
-  .pd_20 {
-    padding: 20px !important
-  }
-
-  .ft_12 {
-    font-size: 12px !important
-  }
-
-  .ft_13 {
-    font-size: 13px !important
-  }
-
-  .ft_14 {
-    font-size: 14px !important
-  }
-
-  .ft_15 {
-    font-size: 15px !important
-  }
-
-  .ft_16 {
-    font-size: 16px !important
-  }
-
-  .ft_18 {
-    font-size: 18px !important
-  }
-
-  .ft_20 {
-    font-size: 20px !important
-  }
-
-  .fc_333 {
-    color: #333 !important
-  }
-
-  .fc_666 {
-    color: #666 !important
-  }
-
-  .fc_999 {
-    color: #999 !important
-  }
-
-  .fc_blue {
-    color: #409EFF !important
-  }
-
-  .fc_red {
-    color: #F56C6C !important
-  }
-
-  .fc_orange {
-    color: #E6A23C !important
-  }
-
-  .fc_green {
-    color: #67C23A !important
-  }
-
-  .clearfix:after {
-    display: block;
-    clear: both;
-    content: ""
-  }
-
-  .lh18 {
-    line-height: 18px !important;
-  }
-
-  .pull-left {
-    float: left !important
-  }
-
-  .pull-right {
-    float: right !important
-  }
-
-  .f-lt, .f-li li {
-    float: left;
-    display: inline
-  }
-
-  .block {
-    display: block !important
-  }
-
-  .inline-block {
-    display: inline-block !important
-  }
-
-  .vam {
-    vertical-align: middle !important
-  }
-
-  .relative {
-    position: relative !important
-  }
-
-  .text-left {
-    text-align: left !important
-  }
-
-  .text-center {
-    text-align: center !important
-  }
-
-  .text-right {
-    text-align: right !important
-  }
-
-  .v_hide {
-    visibility: hidden
-  }
-
-  .hide {
-    display: none !important
-  }
-
-  .side-header {
-    padding: 20px 0 10px 20px;
-    font-size: 16px
-  }
-
-  .panel-title {
-    border-left: 2px solid #797979;
-    padding-left: 18px;
-    margin-left: -20px;
-    font-size: 16px;
-    color: #333;
-    margin-bottom: 20px
-  }
-
-  .page-title {
-    color: #666;
-    font-size: 18px;
-  }
-
-  .vat {
-    vertical-align: top;
-  }
-
-  pre {
-    white-space: pre-wrap;
-    word-wrap: break-word;
-  }
-
-  .pointer {
-    cursor: pointer;
-  }
-
-  textarea {
-    word-break: break-all;
-  }
-
-  .markdown-content {
-    color: #555;
-    word-break: break-all;
-    p {
-      margin: 5px 0;
-      line-height: 24px;
-      min-height: 20px;
-    }
-    h1 {
-      color: #666666;
-      margin: 10px 0;
-    }
-    h2 {
-      color: #666666;
-      margin: 9px 0;
-    }
-    h3 {
-      color: #666666;
-      margin: 8px 0;
-    }
-    h4 {
-      color: #666666;
-      margin: 7px 0;
-    }
-    h5 {
-      color: #666666;
-      margin: 6px 0;
-    }
-    h6 {
-      color: #666666;
-      margin: 5px 0;
-    }
-    code {
-      color: #F23C3C;
-      padding: 3px;
-      background: rgb(255, 239, 183);
-    }
-    a {
-      color: #1890ff;
-    }
-    hr {
-      border: none !important;
-      border-top: 1px solid #ccc !important;
-      width: 92%;
-      margin: 10px auto;
-    }
-    div {
-      margin-top: 5px;
-    }
-    ul {
-      margin-left: 20px;
-      margin-top: 15px;
-      li {
-        margin-top: 2px;
-      }
-    }
-  }
-
-  #xhr-loading {
-    display: none;
-    position: fixed;
-    height: 100%;
-    width: 100%;
-    z-index: 99;
-    top: 0;
-    left: 0;
-
-    .xhr-loading-icon {
-      background: rgba(0, 0, 0, 0.4);
-      border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      margin: 150px auto;
-      animation: loadingAnimation 0.85s infinite;
-    }
-  }
-
-  @keyframes loadingAnimation {
-    from {
-      background: rgba(0, 0, 0, 0.4);
-      width: 50px;
-      height: 50px;
-      margin: 150px auto;
-    }
-    to {
-      margin: 140px auto;
-      width: 70px;
-      height:70px;
-      background: rgba(0, 0, 0, 0.1);
-    }
-  }
-
 </style>

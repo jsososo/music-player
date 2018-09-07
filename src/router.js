@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
-import Player from './views/Player'
+import Player from './views/PlayerPage'
 import Me from './views/Me'
 
 Vue.use(Router);
@@ -46,6 +46,14 @@ const router = new Router({
       component: () => import('./views/Storehouse.vue'),
       meta: {
         title: '曲库'
+      },
+    },
+    {
+      path: '/development',
+      name: 'development',
+      component: () => import('./views/Development.vue'),
+      meta: {
+        title: '大后门'
       }
     }
 
