@@ -6,9 +6,10 @@
       <span class="song-album">专辑</span>
     </div>
     <div :class="$store.state.playNow.objectId === s.objectId ? 'song-item playing' : 'song-item'"
-         v-for="s in list"
+         v-for="(s, i) in list"
          :key="s.objectId"
          @click="playMusic(s.objectId)">
+      <span class="song-order">{{i + 1}}</span>
       <span class="song-title">{{s.title}}</span>
       <span class="song-artist">{{s.artist}}</span>
       <span class="song-album">{{s.album}}</span>
@@ -18,7 +19,6 @@
 </template>
 
 <script>
-  import Storage from '../assets/utils/Storage';
   export default {
     name: "SongList",
     props: {
@@ -37,10 +37,10 @@
       }
     },
     created() {
-      this.updateList(true);
+      this.updateList();
     },
     methods: {
-      updateList(isFirst) {
+      updateList() {
         const state = this.$store.state;
         if (!Object.values(state.allSongs).length) {
           setTimeout(this.updateList, 100);
@@ -57,9 +57,6 @@
           list = Object.values(state.allSongs);
         }
         this.list = list;
-        if (isFirst) {
-          this.playMusic(Object.keys(state.allSongs)[0], false);
-        }
       },
       playMusic(id, play = true) {
         const state = this.$store.state;
@@ -108,10 +105,13 @@
       padding: 10px;
       box-sizing: border-box;
       color: #777;
-      font-size: 15px;
+      font-size: 14px;
+    }
+    .song-order {
+      width: 5%
     }
     .song-title {
-      width: 35%;
+      width: 30%;
     }
     .song-artist {
       width: 25%;

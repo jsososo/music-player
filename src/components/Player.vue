@@ -1,17 +1,22 @@
 <template>
   <div class="player-container">
     <div>
+      <div class="cover-container inline-block mg_10">
+        <img :src="$store.state.playNow.cover" width="70px" height="70px" alt="">
+      </div>
       <!-- 播放，上一首、下一首进度 -->
       <div class="control-btn">
-        <icon name="step-backward" scale="1.5"/>
+        <div class="inline-block">
+          <i class="icon-previous iconfont" />
+        </div>
         <div class="inline-block" v-if="!$store.state.playing" @click="$store.state.playing = true">
-          <icon name="play" scale="1.5"/>
+          <i class="iconfont icon-play" />
         </div>
         <div class="inline-block" v-if="$store.state.playing" @click="$store.state.playing = false">
-          <icon name="pause" scale="1.5"/>
+          <i class="iconfont icon-pause"/>
         </div>
         <div class="inline-block" @click="$store.commit('playNext')">
-          <icon name="step-forward" scale="1.5"/>
+          <i class="icon-next iconfont" />
         </div>
       </div>
       <div class="inline-block progress-container">
@@ -38,21 +43,34 @@
         </div>
       </div>
       <!-- 音量、播放顺序、列表等控制 -->
-      <div class="other-control inline-block" @mouseover="showVolume = true" @mouseout="showVolume = false" >
+      <div class="other-control inline-block">
         <!-- 音量控制 -->
-        <div class="volume-control">
-          <div style="margin-top: 10px;" :class="showVolume ? '' : 'hidden'">
-            <el-slider
-              v-model="volume"
-              @change="changeVolume"
-              :vertical="true"
-              height="60px"
-              :max="100"/>
+        <div :class="`volume-control ${!showVolume && 'hide-slider'}`"  @mouseout="showVolume = false">
+          <div class="volume-slider-container" @mouseout="showVolume = false" @mouseover="showVolume = true">
+            <div class="volume-slider" >
+              <el-slider
+                v-model="volume"
+                @change="changeVolume"
+                :vertical="true"
+                height="80px"
+                :max="100"/>
+            </div>
           </div>
-          <icon style="margin: 40px 10px;" v-if="!showVolume" name="volume-up" scale="1.3" />
+          <i class="iconfont icon-volume" @mouseover="showVolume = true" />
         </div>
         <!-- 播放顺序 -->
-        <div class="order-control"></div>
+        <div :class="`order-control ${!showOrder && 'hide-order'}`"  @mouseout="showOrder = false">
+          <div class="order-list-container" @mouseout="showOrder = false" @mouseover="showOrder = true">
+            <div class="order-list">
+              <div v-for="key in orderList" v-if="orderType !== key" :key="`order-${key}`" @click="changeOrderType(key)">
+                <i :class="`iconfont icon-${key}`" />
+              </div>
+            </div>
+          </div>
+          <div class="now-order-type" @mouseover="showOrder = true" >
+            <i :class="`iconfont icon-${orderType}`" />
+          </div>
+        </div>
         <!-- 播放列表 -->
       </div>
     </div>
@@ -73,6 +91,10 @@
         stopUpdateCurrent: false,
         stopVolume: false,
         showVolume: false,
+        showOrder: false,
+        storage: Storage,
+        orderList: ['suiji', 'danquxunhuan', 'liebiao'],
+        orderType: Storage.get('orderType'),
       }
     },
     watch: {
@@ -100,7 +122,6 @@
         // 定时任务，更新当前的播放情况
         window.checkPlayer = setInterval(() => {
           const pDom = this.playerDom;
-
           // 如果没有获取过歌曲的详细信息，那就获取
           if (!state.loading && !state.playNow.url && state.playNow.objectId) {
             const id = state.playNow.objectId;
@@ -117,7 +138,7 @@
             this.currentTime = (state.playNow && state.playNow.url) ? pDom.currentTime : 0;
           }
           if (!this.stopVolume) {
-            this.volume = pDom.volume * 100;
+            this.volume = Num(pDom.volume * 100);
           }
 
           // 只有当正在播放、加载完url时才播放
@@ -132,8 +153,14 @@
           }
           // 播放一下首（如果url还没加载到的话不要切歌，因为audio的dom还会认为处于播放完的状态，毕竟src没有改过）
           if (state.playing && pDom.ended && state.playNow.url) {
-            this.$store.commit('playNext');
+            if (this.orderType !== 'danquxunhuan') {
+              this.$store.commit('playNext');
+            } else {
+              // 单曲循环的话，继续播放这首
+              pDom.play();
+            }
           }
+          // 如果是单曲循环放完了，那就不停
           this.$store.commit('updatePlayer', {
             duration: pDom.duration,
           });
@@ -162,18 +189,21 @@
         this.playerDom.volume = v / 100;
         Storage.set('volume', v / 100);
       },
+      // 切换播放顺序
+      changeOrderType(v) {
+        this.orderType = v;
+        Storage.set('orderType', v);
+      }
     }
   }
 </script>
 
 <style lang="scss">
-  .hidden {
-    display: none;
-  }
   audio {
     display: none !important;
   }
   .player-container {
+    z-index: 1000;
     width: 100vw;
     height: 90px;
     position: fixed;
@@ -181,14 +211,118 @@
     left: 0;
     border-top: 1px solid #409EFF;
     background: white;
-    padding-left: 60px;
+    padding-left: 20px;
 
     .other-control {
       margin-left: 25px;
+
+      .iconfont {
+        font-size: 20px;
+      }
+
+      .order-control {
+        display: inline-block;
+        position: relative;
+        top: -45px;
+        background: white;
+
+        .now-order-type {
+          padding: 10px;
+          margin-top: -5px;
+        }
+
+        .order-list-container {
+          padding-bottom: 10px;
+        }
+        
+        &.hide-order {
+          padding-bottom: 0;
+          top: 0;
+
+          .order-list-container {
+            padding-bottom: 0;
+          }
+
+          .order-list {
+            display: none;
+            opacity: 0;
+          }
+
+          .now-order-type {
+            margin-top: 30px;
+          }
+        }
+
+        .order-list {
+          position: relative;
+          padding: 4px 0;
+          border-radius: 10px;
+          border: 1px solid #eaeaea;
+          opacity: 1;
+          transition: 0.4s opacity;
+
+          div {
+            padding: 3px 10px;
+            cursor: pointer;
+            &:hover {
+              background: #d4eaff;
+            }
+          }
+        }
+      }
+
+      .volume-control {
+        display: inline-block;
+        position: relative;
+        vertical-align: top;
+        height: 165px;
+        top: -87px;
+
+        .volume-slider-container {
+          position: relative;
+          padding-bottom: 20px;
+          opacity: 1;
+          transition: 0.4s opacity;
+        }
+
+        .iconfont {
+          margin: -5px 10px 0 10px;
+        }
+
+        &.hide-slider {
+          top: 0;
+          height: 90px;
+
+          .volume-slider-container {
+            padding-bottom: 0;
+            opacity: 0;
+          }
+          .iconfont {
+            margin: 40px 10px;
+          }
+          .volume-slider {
+            display: none;
+          }
+        }
+
+        .volume-slider {
+          position: relative;
+          background: white;
+          border: #eaeaea 1px solid;
+          padding: 15px 0;
+          border-radius: 10px;
+        }
+      }
+    }
+
+    .cover-container {
+      width: 60px;
+      height: 60px;
     }
 
     .progress-container {
       margin-top: 15px;
+      margin-left: 15px;
 
       .song-info {
         font-size: 13px;
@@ -208,7 +342,7 @@
       }
     }
 
-    .fa-icon {
+    .iconfont {
       color: #409EFF;
     }
 
@@ -217,8 +351,10 @@
       margin-left: 30px;
       display: inline-block;
 
-      .fa-icon {
-        margin-right: 25px;
+      .iconfont {
+        margin-right: 17px;
+        font-size: 24px;
+        cursor: pointer;
       }
     }
   }

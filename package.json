@@ -12,7 +12,6 @@
     "node-sass": "^4.9.3",
     "sass-loader": "^7.1.0",
     "vue": "^2.5.17",
-    "vue-awesome": "^3.1.0",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.1"
   },
