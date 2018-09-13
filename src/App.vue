@@ -1,21 +1,6 @@
 <template>
   <div id="app">
-    <div class="left-menu">
-      <el-menu :default-active="`/${defaultActive}`" :router="true" >
-        <el-menu-item index="/me">
-          <i class="iconfont icon-me"/>
-        </el-menu-item>
-        <el-menu-item index="/">
-          <i class="iconfont icon-dpguangpan" style="padding: 0;" />
-        </el-menu-item>
-        <el-menu-item index="/storehouse">
-          <i class="iconfont icon-cangku"/>
-        </el-menu-item>
-        <a class="text-center block fc_999 mt_10" target="_blank" href="//jsososo.com">
-          <span target="_blank">So</span>
-        </a>
-      </el-menu>
-    </div>
+    <img src="./assets/img/bg-1.png" alt="" class="app-bg">
     <div class="main-container">
       <router-view/>
       <Player />
@@ -50,13 +35,12 @@
           this.$store.state.sysObjectId = res.objectId;
           this.$store.state.sysSongs = res.tags;
           this.$store.state.sysTags = Object.keys(res.tags);
-
         }
       );
       Storage.queryBmob(
         'MusicSongs',
         (q) => {
-          q.select('artist', 'album', 'title');
+          q.select('artist', 'album', 'title', 'search');
           return q;
         },
         (res) => {
@@ -64,9 +48,10 @@
           res.forEach((item) => allSongs[item.objectId] = item);
           this.$store.state.allSongs = allSongs;
           this.$store.commit('updatePlayNow', {
-            obj: res[res.length - 1],
+            obj: res[res.length - 10],
             list: Object.keys(allSongs),
           });
+          this.$store.commit('changeShowList', Object.values(allSongs));
         },
         null,
         'find'
@@ -77,42 +62,30 @@
 
 <style lang="scss">
   @import "assets/style/common";
+  body {
+    overflow: hidden;
+  }
   #app {
-    min-height: 100vh;
+    height: 100vh;
+    overflow: hidden;
 
-    .left-menu {
-      min-height: 100vh;
-      width: 80px;
-      display: inline-block;
-      height: 100%;
-      border-right: solid 1px #e6e6e6;
-      vertical-align: top;
-
-      .iconfont {
-        font-size: 22px;
-        padding: 0 10px;
-      }
-
-      .el-menu {
-        border: none;
-      }
-
-      .el-menu-item {
-        color: #999;
-        padding-left: 0;
-
-        &.is-active {
-          color: #409EFF;
-          background: #ecf5ff;
-        }
-      }
+    .app-bg {
+      position: relative;
+      z-index: -1;
+      top: 0;
+      left: 0;
+      width: 100%;
     }
+
     .main-container {
+      position: absolute;
+      overflow: hidden;
+      top: 0;
+      left: 0;
       display: inline-block;
       vertical-align: top;
-      padding: 20px;
+      padding: 20px 20px 100px 20px;
       width: calc(100% - 130px);
-      padding-bottom: 100px;
     }
   }
 </style>

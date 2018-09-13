@@ -1,10 +1,6 @@
 <template>
   <div>
     <div class="tag-container">
-      <el-radio-group v-model="tagOwner" @change="changeOwner">
-        <el-radio-button label="系统"></el-radio-button>
-        <el-radio-button label="我的"></el-radio-button>
-      </el-radio-group>
       <div class="tag-list">
         <div :class="tag === '' ? 'selected tag-item' : 'tag-item'" @click="selectTag('')">全部</div>
         <div :class="tag === t ? 'selected tag-item' : 'tag-item'" v-for="(t, i) in tags" :key="`tag-${i}`" @click="selectTag(t)">

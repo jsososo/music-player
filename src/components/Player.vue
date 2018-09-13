@@ -1,27 +1,25 @@
 <template>
   <div class="player-container">
     <div>
-      <div class="cover-container inline-block mg_10">
-        <img :src="$store.state.playNow.cover" width="70px" height="70px" alt="">
-      </div>
       <!-- 播放，上一首、下一首进度 -->
       <div class="control-btn">
         <div class="inline-block">
-          <i class="icon-previous iconfont" />
+          <i class="icon-shangyishou1 iconfont" />
         </div>
         <div class="inline-block" v-if="!$store.state.playing" @click="$store.state.playing = true">
-          <i class="iconfont icon-play" />
+          <i class="iconfont icon-bofang" />
         </div>
         <div class="inline-block" v-if="$store.state.playing" @click="$store.state.playing = false">
-          <i class="iconfont icon-pause"/>
+          <i class="iconfont icon-zanting1" style="font-size: 34px;" />
         </div>
         <div class="inline-block" @click="$store.commit('playNext')">
-          <i class="icon-next iconfont" />
+          <i class="icon-xiayishou1 iconfont" />
         </div>
       </div>
       <div class="inline-block progress-container">
         <!-- 歌曲信息 -->
         <div class="song-info">
+          <i class="el-icon-loading mr_10" v-if="$store.state.downloading" />
           <span>{{$store.state.playNow.title}}</span>
           <span style="padding-left: 30px;">{{$store.state.playNow.artist}}</span>
         </div>
@@ -133,6 +131,8 @@
             });
           }
 
+          state.downloading = !(state.playNow.url && (pDom.readyState === 4));
+
           // 不去更新data
           if (!this.stopUpdateCurrent) {
             this.currentTime = (state.playNow && state.playNow.url) ? pDom.currentTime : 0;
@@ -209,8 +209,6 @@
     position: fixed;
     bottom: 0;
     left: 0;
-    border-top: 1px solid #409EFF;
-    background: white;
     padding-left: 20px;
 
     .other-control {
@@ -224,7 +222,6 @@
         display: inline-block;
         position: relative;
         top: -45px;
-        background: white;
 
         .now-order-type {
           padding: 10px;
@@ -260,12 +257,13 @@
           border: 1px solid #eaeaea;
           opacity: 1;
           transition: 0.4s opacity;
+          background: rgba(255,255,255,0.4);
 
           div {
             padding: 3px 10px;
             cursor: pointer;
             &:hover {
-              background: #d4eaff;
+              background: rgba(255,255,255,0.3);
             }
           }
         }
@@ -307,7 +305,7 @@
 
         .volume-slider {
           position: relative;
-          background: white;
+          background: rgba(255,255,255,0.4);
           border: #eaeaea 1px solid;
           padding: 15px 0;
           border-radius: 10px;
@@ -315,24 +313,21 @@
       }
     }
 
-    .cover-container {
-      width: 60px;
-      height: 60px;
-    }
-
     .progress-container {
       margin-top: 15px;
       margin-left: 15px;
+      color: white;
 
       .song-info {
-        font-size: 13px;
+        font-size: 14px;
         display: inline-block;
+        font-weight: 900;
       }
 
       .play-time {
         display: inline-block;
-        font-size: 13px;
-        color: #999;
+        font-size: 14px;
+        font-weight: 900;
         float: right;
       }
 
@@ -343,18 +338,26 @@
     }
 
     .iconfont {
-      color: #409EFF;
+      color: White;
+    }
+
+    .el-slider__runway {
+      background: white !important;
     }
 
     .control-btn {
-      margin-top: 35px;
+      margin-top: 25px;
       margin-left: 30px;
       display: inline-block;
 
+      >div {
+        width: 50px;
+      }
+
       .iconfont {
-        margin-right: 17px;
-        font-size: 24px;
+        font-size: 30px;
         cursor: pointer;
+        line-height: 50px;
       }
     }
   }
