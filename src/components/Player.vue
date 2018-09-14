@@ -3,7 +3,7 @@
     <div>
       <!-- 播放，上一首、下一首进度 -->
       <div class="control-btn">
-        <div class="inline-block">
+        <div class="inline-block" @click="$store.commit('playPrev')">
           <i class="icon-shangyishou1 iconfont" />
         </div>
         <div class="inline-block" v-if="!$store.state.playing" @click="$store.state.playing = true">
@@ -125,9 +125,11 @@
             const id = state.playNow.objectId;
             state.loading = true;
             this.getMusicInfo(id, (res) => {
-              state.playNow = res;
+              if (state.playNow.objectId === res.objectId) {
+                state.playNow = res;
+                state.loading = false;
+              }
               state.allSongs[id] = res;
-              state.loading = false;
             });
           }
 
@@ -193,6 +195,7 @@
       changeOrderType(v) {
         this.orderType = v;
         Storage.set('orderType', v);
+        this.$store.commit('clearRandomHistory');
       }
     }
   }

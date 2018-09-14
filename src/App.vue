@@ -67,7 +67,6 @@
   }
   #app {
     height: 100vh;
-    overflow: hidden;
 
     .app-bg {
       position: relative;
@@ -79,13 +78,15 @@
 
     .main-container {
       position: absolute;
-      overflow: hidden;
+      overflow-y: auto;
+      min-height: 650px;
       top: 0;
       left: 0;
       display: inline-block;
       vertical-align: top;
       padding: 20px 20px 100px 20px;
-      width: calc(100% - 130px);
+      width: 100%;
+      box-sizing: border-box;
     }
   }
 </style>

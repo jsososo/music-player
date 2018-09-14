@@ -42,10 +42,12 @@
 
 <style lang="scss">
   .song-list {
-    height: calc(100vh - 250px);
+    height: calc(100vh - 230px);
     overflow-y: auto;
     overflow-x: hidden;
     width: 550px;
+    margin-top: 30px;
+    margin-right: 20px;
 
     &::-webkit-scrollbar
     {
@@ -57,7 +59,6 @@
      内阴影+圆角*/
     &::-webkit-scrollbar-track
     {
-      //-webkit-box-shadow:inset 0 0 6px rgba(0,0,0,0.3);
       border-radius:10px;
       background-color: rgba(255,255,255,0.1);
     }
@@ -71,7 +72,7 @@
   }
 
   .empty-status {
-    color: #999;
+    color: White;
     font-size: 20px;
     text-align: center;
     line-height: 30px;
