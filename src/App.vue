@@ -49,7 +49,6 @@
           this.$store.state.allSongs = allSongs;
           this.$store.commit('updatePlayNow', {
             obj: res[res.length - 10],
-            list: Object.keys(allSongs),
           });
           this.$store.commit('changeShowList', Object.values(allSongs));
         },

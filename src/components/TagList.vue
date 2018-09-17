@@ -1,0 +1,135 @@
+<template>
+  <div :class="`tag-list-container ${showList ? 'show-list' : 'hide-list'}`" @mouseover="showList = true" @mouseout="showList = false">
+    <i class="iconfont icon-arrow-left show-tag-btn" @mouseover="showList = true" />
+    <div class="tag-list">
+      <div
+        :class="`tag-item
+        ${$store.state.tagInfo.isSys && $store.state.tagInfo.selected === '' && 'selected'}
+        ${$store.state.tagInfo.playing === '' && 'playing'}`"
+        @click="$store.commit('updateSelectedTag', '')"
+      >全部</div>
+      <div
+        :class="`tag-item
+        ${$store.state.tagInfo.isSys && $store.state.tagInfo.selected === item && 'selected'}
+        ${$store.state.tagInfo.playing === item && 'playing'}`"
+        v-for="(item, index) in $store.state.sysTags" :key="`tag-${item}-${index}`"
+        @click="$store.commit('updateSelectedTag', item)"
+      >{{item}}
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+  export default {
+    name: "TagList",
+    data() {
+      return {
+        showList: false,
+        tagType: 'sys',
+      }
+    },
+    created() {
+      console.log(this.$store.state);
+    }
+  }
+</script>
+
+<style lang="scss">
+  .tag-list-container {
+    display: inline-block;
+    vertical-align: top;
+    height: calc(100vh - 200px);
+    margin-top: 60px;
+    position: relative;
+    transition: 0.3s linear;
+
+    .tag-list {
+      overflow: hidden;
+      transition: 0.3s linear;
+      color: rgba(255,255,255,0.7);
+      height: calc(100vh - 200px);
+      overflow-y: auto;
+      position: absolute;
+
+      .tag-item {
+        width: 100%;
+        text-overflow: ellipsis;
+        white-space:nowrap;
+        overflow: hidden;
+        height: 20px;
+        padding: 10px 5px 10px 10px;
+
+        &.selected {
+          background: rgba(255,255,255,0.2);
+        }
+
+        &:hover {
+          background: rgba(255,255,255,0.1);
+        }
+        &.playing {
+          background: rgba(255,255,255,0.2);
+          border-left: 3px solid rgba(255,255,255,0.6);
+        }
+      }
+
+      &::-webkit-scrollbar
+      {
+        width:8px;
+        height:8px;
+        background-color:rgba(0,0,0,0);
+      }
+      /*定义滚动条轨道
+       内阴影+圆角*/
+      &::-webkit-scrollbar-track
+      {
+        border-radius:10px;
+        background-color: rgba(255,255,255,0.1);
+      }
+      /*定义滑块
+       内阴影+圆角*/
+      &::-webkit-scrollbar-thumb
+      {
+        border-radius:10px;
+        background-color:rgba(255,255,255,0.5);
+      }
+    }
+
+    &.hide-list {
+      width: 50px;
+
+      .show-tag-btn {
+        display: inline-block;
+      }
+
+      .tag-list {
+        width: 0;
+        opacity: 0;
+        z-index: -1;
+        left: 50px;
+      }
+    }
+
+    &.show-list {
+      width: 130px;
+
+      .show-tag-btn {
+        display: none;
+      }
+
+      .tag-list {
+        width: 100px;
+        opacity: 1;
+        z-index: 10;
+        left: 0;
+      }
+    }
+
+    .show-tag-btn {
+      position: absolute;
+      top: calc(50vh - 125px);
+      font-size: 50px;
+      color: rgba(255,255,255,0.4);
+    }
+  }
+</style>

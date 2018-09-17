@@ -33,7 +33,6 @@
         const list = state.showList.map(item => item.objectId);
         this.$store.commit('updatePlayNow', {
           obj: state.allSongs[id],
-          list,
         });
       },
     }
@@ -42,11 +41,12 @@
 
 <style lang="scss">
   .song-list {
-    height: calc(100vh - 230px);
+    display: inline-block;
+    height: calc(100vh - 200px);
     overflow-y: auto;
     overflow-x: hidden;
     width: 550px;
-    margin-top: 30px;
+    margin-top: 10px;
     margin-right: 20px;
 
     &::-webkit-scrollbar

@@ -7,8 +7,13 @@
       <SongInfo />
     </div>
     <div class="song-container">
-      <Search />
-      <SongList :isSys="tagOwner === '系统'" :tag="tag" />
+      <div>
+        <TagList />
+        <div class="inline-block">
+          <Search />
+          <SongList :isSys="tagOwner === '系统'" :tag="tag" />
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -18,9 +23,11 @@
   import SongList from '@/components/SongList';
   import SongInfo from '@/components/SongInfo';
   import Search from '@/components/Search';
+  import TagList from '@/components/TagList';
+
   export default {
     name: "playerpage",
-    components: { Cd, SongList, SongInfo, Search },
+    components: { Cd, SongList, SongInfo, Search, TagList },
     data() {
       return {
         tag: '',
