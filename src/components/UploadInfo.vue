@@ -12,12 +12,10 @@
         <div class="input-line">
           歌名：<el-input class="input-box" v-model="f.title" />
           歌手：<el-input class="input-box"  v-model="f.artist" />
-        </div>
-        <div class="input-line">
           专辑：<el-input class="input-box" v-model="f.album" />
-          搜索：<el-input class="input-box" v-model="f.search" />
         </div>
         <div class="input-line">
+          搜索：<el-input class="input-box" v-model="f.search" />
           标签：
           <el-select
             class="input-tag"
@@ -27,13 +25,13 @@
             allow-create
             default-first-option
             placeholder="考虑加下标签呗">
-          <el-option
-            v-for="t in tags"
-            :key="t"
-            :label="t"
-            :value="t">
-          </el-option>
-        </el-select>
+            <el-option
+              v-for="t in tags"
+              :key="t"
+              :label="t"
+              :value="t">
+            </el-option>
+          </el-select>
         </div>
         <el-button v-if="!f.uploading" class="up-btn" @click="upload(i)">上传吧</el-button>
         <div class="up-progress" v-if="f.uploading">
@@ -111,7 +109,7 @@
       changeCover(i) {
         const id = `up-cover-${i}`;
         const input = document.getElementById(id);
-        this.selectIdex = i;
+        this.selectIndex = i;
         input.click();
       },
       uploadImg(e) {
@@ -135,9 +133,12 @@
 
     .up-file-item {
       margin-top: 20px;
+      min-height: 200px;
 
       .img-container {
         width: 200px;
+        height: 200px;
+        background: rgba(255,255,255,0.3);
         position: relative;
         display: inline-block;
 

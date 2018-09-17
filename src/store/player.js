@@ -127,7 +127,7 @@ const Player = new Vuex.Store({
     // 搜索歌曲
     searchList(state, data) {
       const { search, isAll } = data;
-      let findList = state.playingList;
+      let findList = state.sysSongs[state.tagInfo.selected].map(id => state.allSongs[id]);
       if (isAll) {
         findList = Object.values(state.allSongs);
       }

@@ -20,8 +20,15 @@
     watch: {
       search(v) {
         const data = {
-          search: v.replace(/\s/g, ' '),
-          isAll: this.sOpt === '列表内',
+          search: v.replace(/\s|,|，|\//g, ''),
+          isAll: this.sOpt === '站内',
+        };
+        this.$store.commit('searchList', data);
+      },
+      sOpt(v) {
+        const data = {
+          search: this.search.replace(/\s|,|，|\//g, ''),
+          isAll: v === '站内',
         };
         this.$store.commit('searchList', data);
       }

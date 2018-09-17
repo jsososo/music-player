@@ -41,6 +41,7 @@
         'MusicSongs',
         (q) => {
           q.select('artist', 'album', 'title', 'search');
+          q.limit(1000);
           return q;
         },
         (res) => {
@@ -78,14 +79,35 @@
     .main-container {
       position: absolute;
       overflow-y: auto;
-      min-height: 650px;
+      height: calc(100vh - 100px);
       top: 0;
       left: 0;
       display: inline-block;
       vertical-align: top;
-      padding: 20px 20px 100px 20px;
+      padding: 20px 20px 0 20px;
       width: 100%;
       box-sizing: border-box;
+
+      &::-webkit-scrollbar
+      {
+        width:8px;
+        height:8px;
+        background-color:rgba(0,0,0,0);
+      }
+      /*定义滚动条轨道
+       内阴影+圆角*/
+      &::-webkit-scrollbar-track
+      {
+        border-radius:10px;
+        background-color: rgba(255,255,255,0.1);
+      }
+      /*定义滑块
+       内阴影+圆角*/
+      &::-webkit-scrollbar-thumb
+      {
+        border-radius:10px;
+        background-color:rgba(255,255,255,0.5);
+      }
     }
   }
 </style>

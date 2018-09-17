@@ -25,7 +25,7 @@
     name: "TagList",
     data() {
       return {
-        showList: false,
+        showList: true,
         tagType: 'sys',
       }
     },
@@ -51,6 +51,7 @@
       height: calc(100vh - 200px);
       overflow-y: auto;
       position: absolute;
+      min-height: 500px;
 
       .tag-item {
         width: 100%;
@@ -118,7 +119,7 @@
       }
 
       .tag-list {
-        width: 100px;
+        width: 130px;
         opacity: 1;
         z-index: 10;
         left: 0;

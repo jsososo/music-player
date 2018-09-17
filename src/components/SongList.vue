@@ -48,6 +48,7 @@
     width: 550px;
     margin-top: 10px;
     margin-right: 20px;
+    min-height: 500px;
 
     &::-webkit-scrollbar
     {
