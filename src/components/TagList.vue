@@ -25,13 +25,10 @@
     name: "TagList",
     data() {
       return {
-        showList: true,
+        showList: false,
         tagType: 'sys',
       }
     },
-    created() {
-      console.log(this.$store.state);
-    }
   }
 </script>
 
@@ -60,9 +57,10 @@
         overflow: hidden;
         height: 20px;
         padding: 10px 5px 10px 10px;
+        transition: 0.4s;
 
         &.selected {
-          background: rgba(255,255,255,0.2);
+          background: rgba(255,255,255,0.2) !important;
         }
 
         &:hover {
