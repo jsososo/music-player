@@ -13,6 +13,7 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
   export default {
     name: "SongList",
     props: {
@@ -21,12 +22,11 @@
       hideHeader: Boolean,
     },
     computed: {
-      playNow() {
-        return this.$store.getters.getPlaying;
-      },
-      showList() {
-        return this.$store.getters.getShowList;
-      },
+      ...mapGetters({
+        playNow: 'getPlaying',
+        showList: 'getShowList',
+        allSongs: 'getAllSongs',
+      }),
     },
     methods: {
       playMusic(id, play = true) {
