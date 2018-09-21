@@ -3,6 +3,7 @@
     <el-radio-group v-model="sOpt">
       <el-radio-button label="列表内"></el-radio-button>
       <el-radio-button label="站内"></el-radio-button>
+      <!--<el-radio-button label="QQ音乐"></el-radio-button>-->
     </el-radio-group>
     <input type="text" class="search-input" placeholder="找点什么吧" v-model="search">
   </div>
@@ -19,18 +20,22 @@
     },
     watch: {
       search(v) {
-        const data = {
-          search: v.replace(/\s|,|，|\//g, ''),
-          isAll: this.sOpt === '站内',
-        };
-        this.$store.commit('searchList', data);
+        if (this.sOpt !== 'QQ音乐') {
+          const data = {
+            search: v.replace(/\s|,|，|\//g, ''),
+            isAll: this.sOpt === '站内',
+          };
+          this.$store.dispatch('searchMusic', data);
+        }
       },
       sOpt(v) {
-        const data = {
-          search: this.search.replace(/\s|,|，|\//g, ''),
-          isAll: v === '站内',
-        };
-        this.$store.commit('searchList', data);
+        if (v !== 'QQ音乐') {
+          const data = {
+            search: this.search.replace(/\s|,|，|\//g, ''),
+            isAll: v === '站内',
+          };
+          this.$store.dispatch('searchMusic', data);
+        }
       }
     }
   }

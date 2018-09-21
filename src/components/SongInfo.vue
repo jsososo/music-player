@@ -2,15 +2,15 @@
   <div class="song-info-container">
     <div class="info-row">
       <span class="info-key">歌名：</span>
-      <span>{{$store.state.playNow.title}}</span>
+      <span>{{playNow.title}}</span>
     </div>
     <div class="info-row">
       <span class="info-key">歌手：</span>
-      <span>{{$store.state.playNow.artist}}</span>
+      <span>{{playNow.artist}}</span>
     </div>
     <div class="info-row">
       <span class="info-key">专辑：</span>
-      <span>{{$store.state.playNow.album}}</span>
+      <span>{{playNow.album}}</span>
     </div>
     <div class="info-row">
       <span class="info-key">标签：</span>
@@ -22,10 +22,11 @@
 <script>
   export default {
     name: "SongInfo",
-    data() {
-      return {
+    computed: {
+      playNow() {
+        return this.$store.getters.getPlaying;
       }
-    }
+    },
   }
 </script>
 

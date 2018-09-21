@@ -1,14 +1,25 @@
 <template>
   <div :class="`play-cd-container playing-${$store.state.playing} loading-${$store.state.loading}`">
     <div class="cd-bg">
-      <img v-if="$store.state.playNow.cover" :src="$store.state.playNow.cover">
+      <img v-if="playNow.cover" :src="playNow.cover">
     </div>
   </div>
 </template>
 
 <script>
   export default {
-    name: "Cd"
+    name: "Cd",
+    computed: {
+      playNow() {
+        return this.$store.getters.getPlaying;
+      },
+      playing() {
+        return this.$store.getters.isPlaying;
+      },
+      loading() {
+        return this.$store.getters.isLoading;
+      }
+    }
   }
 </script>
 
@@ -43,10 +54,10 @@
 
     img {
       position: absolute;
-      top: 75px;
-      left: 75px;
-      width: 150px;
-      height: 150px;
+      top: 60px;
+      left: 60px;
+      width: 180px;
+      height: 180px;
       border-radius: 50%;
     }
   }

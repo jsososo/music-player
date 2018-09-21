@@ -1,14 +1,14 @@
 <template>
   <div class="song-list">
-    <div :class="$store.state.playNow.objectId === s.objectId ? 'song-item playing' : 'song-item'"
-         v-for="(s, i) in $store.state.showList"
+    <div :class="playNow.objectId === s.objectId ? 'song-item playing' : 'song-item'"
+         v-for="(s, i) in showList"
          :key="s.objectId"
          @click="playMusic(s.objectId)">
       <span class="song-order">{{i + 1}}</span>
       <span class="song-title">{{s.title}}</span>
       <span class="song-artist">{{s.artist}}</span>
     </div>
-    <div class="empty-status" v-if="$store.state.showList.length === 0">空空如也！</div>
+    <div class="empty-status" v-if="showList.length === 0">空空如也！</div>
   </div>
 </template>
 
@@ -20,20 +20,21 @@
       tag: String,
       hideHeader: Boolean,
     },
-    data() {
-      return {
-      }
+    computed: {
+      playNow() {
+        return this.$store.getters.getPlaying;
+      },
+      showList() {
+        return this.$store.getters.getShowList;
+      },
     },
     methods: {
       playMusic(id, play = true) {
-        const state = this.$store.state;
+        const dispatch = this.$store.dispatch;
         if (play) {
-          this.$store.state.playing = true;
+          dispatch('updatePlayingStatus', true);
         }
-        const list = state.showList.map(item => item.objectId);
-        this.$store.commit('updatePlayNow', {
-          obj: state.allSongs[id],
-        });
+        dispatch('updatePlayNow', this.allSongs[id])
       },
     }
   }
@@ -100,12 +101,14 @@
       box-sizing: border-box;
       color: #eee;
       font-size: 14px;
+      vertical-align: top;
+      word-wrap: break-word;
     }
     .song-order {
-      width: 5%
+      width: 8%
     }
     .song-title {
-      width: 60%;
+      width: 57%;
     }
     .song-artist {
       width: 35%;

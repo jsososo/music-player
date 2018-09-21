@@ -3,32 +3,32 @@
     <div>
       <!-- 播放，上一首、下一首进度 -->
       <div class="control-btn">
-        <div class="inline-block" @click="$store.commit('playPrev')">
-          <i class="icon-shangyishou1 iconfont" />
+        <div class="inline-block">
+          <i class="icon-shangyishou1 iconfont" @click="cutSong('playPrev')"/>
         </div>
-        <div class="inline-block" v-if="!$store.state.playing" @click="$store.state.playing = true">
-          <i class="iconfont icon-bofang" />
+        <div class="inline-block" v-if="!playing">
+          <i class="iconfont icon-bofang" @click="updatePlayingStatus(true)"/>
         </div>
-        <div class="inline-block" v-if="$store.state.playing" @click="$store.state.playing = false">
-          <i class="iconfont icon-zanting1" style="font-size: 34px;" />
+        <div class="inline-block" v-if="playing">
+          <i class="iconfont icon-zanting1" style="font-size: 34px;" @click="updatePlayingStatus(false)"/>
         </div>
-        <div class="inline-block" @click="$store.commit('playNext')">
-          <i class="icon-xiayishou1 iconfont" />
+        <div class="inline-block">
+          <i class="icon-xiayishou1 iconfont" @click="cutSong('playNext')"/>
         </div>
       </div>
       <div class="inline-block progress-container">
         <!-- 歌曲信息 -->
         <div class="song-info">
-          <i class="el-icon-loading mr_10" v-if="$store.state.downloading" />
-          <span>{{$store.state.playNow.title}}</span>
-          <span style="padding-left: 30px;">{{$store.state.playNow.artist}}</span>
+          <i class="el-icon-loading mr_10" v-if="loading || downloading" />
+          <span>{{playNow.title}}</span>
+          <span style="padding-left: 30px;">{{playNow.artist}}</span>
         </div>
         <!-- 歌曲播放进度 -->
         <div class="play-time">
           <span>
             {{formatTooltip(currentTime)}}
             /
-            {{formatTooltip($store.state.playerInfo.duration)}}
+            {{formatTooltip(playerInfo.duration)}}
           </span>
         </div>
         <!-- 进度条 -->
@@ -37,7 +37,7 @@
             @change="(v) => playerDom.currentTime = v"
             :format-tooltip="formatTooltip"
             v-model="currentTime"
-            :max="$store.state.playerInfo.duration" />
+            :max="playerInfo.duration || 1" />
         </div>
       </div>
       <!-- 音量、播放顺序、列表等控制 -->
@@ -72,13 +72,15 @@
         <!-- 播放列表 -->
       </div>
     </div>
-    <audio id="m-player" :src="$store.state.playNow.url" controls></audio>
+    <audio id="m-player" :src="playNow.url" controls></audio>
   </div>
 </template>
 
 <script>
   import Num from '../assets/utils/num';
   import Storage from '../assets/utils/Storage';
+  import { mapGetters } from 'vuex';
+
   export default {
     name: "PlayerPage",
     data() {
@@ -87,87 +89,81 @@
         currentTime: 0,
         volume: 0,
         stopUpdateCurrent: false,
-        stopVolume: false,
         showVolume: false,
         showOrder: false,
-        storage: Storage,
         orderList: ['suiji', 'danquxunhuan', 'liebiao'],
         orderType: Storage.get('orderType'),
       }
     },
+    computed: {
+      ...mapGetters({
+        playNow: 'getPlaying',
+        playing: 'isPlaying',
+        downloading: 'isDownloading',
+        playerInfo: 'getPlayerInfo',
+        loading: 'isLoading',
+      }),
+    },
     watch: {
+      playNow(v) {
+        this.currentTime = 0;
+        const dispatch = this.$store.dispatch;
+        if (!v.url) {
+          const id = v.objectId;
+          dispatch('setLoading', true);
+          this.getMusicInfo(id, (res) => {
+            if (this.playNow.objectId === res.objectId) {
+              dispatch('updatePlayNow', res);
+              dispatch('setLoading', false);
+            }
+            dispatch('updateSongDetail', { info: res, index: id });
+          });
+        }
+      }
     },
     mounted() {
       this.playerDom = document.getElementById('m-player');
       this.playerDom.volume = Storage.get('volume') || 1;
-      const state = this.$store.state;
-      state.playerDom = this.playerDom;
-      if (!window.onMouseDownRange) {
-        // 当点击进度条的滑块时需要停止进度的判断，否则松开鼠标后onchange事件无法返回正确的value
-        const sDom = document.getElementsByClassName('el-slider__button el-tooltip');
-        const sArr = ['stopUpdateCurrent', 'stopVolume'];
-        window.onMouseDownRange = true; // 防止事件的重复绑定
-        sArr.forEach((key, i) => {
-          sDom[i].onmousedown = () => {
-            this[key] = true;
-          };
-          sDom[i].onmouseup = () => {
-            this[key] = false;
-          }
-        })
-      }
-      if (!window.checkPlayer) {
-        // 定时任务，更新当前的播放情况
-        window.checkPlayer = setInterval(() => {
-          const pDom = this.playerDom;
-          // 如果没有获取过歌曲的详细信息，那就获取
-          if (!state.loading && !state.playNow.url && state.playNow.objectId) {
-            const id = state.playNow.objectId;
-            state.loading = true;
-            this.getMusicInfo(id, (res) => {
-              if (state.playNow.objectId === res.objectId) {
-                state.playNow = res;
-                state.loading = false;
-              }
-              state.allSongs[id] = res;
-            });
-          }
+      // 初始化音量
+      this.volume = (Storage.get('volume') || 1) * 100;
 
-          state.downloading = !(state.playNow.url && (pDom.readyState === 4));
+      const pDom = this.playerDom;
+      const sDom = document.getElementsByClassName('el-slider__button el-tooltip')[0];
+      const dispatch = this.$store.dispatch;
 
-          // 不去更新data
-          if (!this.stopUpdateCurrent) {
-            this.currentTime = (state.playNow && state.playNow.url) ? pDom.currentTime : 0;
-          }
-          if (!this.stopVolume) {
-            this.volume = Num(pDom.volume * 100);
-          }
-
-          // 只有当正在播放、加载完url时才播放
-          if (state.playing && state.playNow && state.playNow.url && pDom.paused && !pDom.ended) {
-            pDom.play();
-          }
-          // 如果url发生改变就停止（切歌时能及时停止）
-          if (!state.playing || !state.playNow.url) {
-            if (!pDom.paused) {
-              pDom.pause();
-            }
-          }
-          // 播放一下首（如果url还没加载到的话不要切歌，因为audio的dom还会认为处于播放完的状态，毕竟src没有改过）
-          if (state.playing && pDom.ended && state.playNow.url) {
-            if (this.orderType !== 'danquxunhuan') {
-              this.$store.commit('playNext');
-            } else {
-              // 单曲循环的话，继续播放这首
-              pDom.play();
-            }
-          }
-          // 如果是单曲循环放完了，那就不停
-          this.$store.commit('updatePlayer', {
-            duration: pDom.duration,
-          });
-        }, 100);
-      }
+      // audio加载完成
+      pDom.oncanplaythrough = () => {
+        if (this.playing && this.playNow.url === pDom.src) {
+          pDom.play();
+        }
+        dispatch('setDownLoading', false);
+        dispatch('updatePlayerInfo', {
+          duration: pDom.duration,
+        });
+      };
+      // audio正在加载音乐
+      pDom.onwaiting = () => {
+        dispatch('setDownLoading', true);
+      };
+      // audio放完了
+      pDom.onended = () => {
+        if (this.orderType !== 'danquxunhuan') {
+          dispatch('playNext');
+        } else {
+          // 单曲循环的话，继续播放这首
+          pDom.play();
+        }
+      };
+      // 音乐播放时进度条
+      pDom.ontimeupdate = () => {
+        if (!this.stopUpdateCurrent) {
+          this.currentTime = this.playNow.url ? pDom.currentTime : 0;
+        }
+      };
+      // 当点击进度条的滑块时需要停止进度的判断，否则松开鼠标后onchange事件无法返回正确的value
+      sDom.onmousedown = () => {
+        this.stopUpdateCurrent = true;
+      };
     },
     methods: {
       getMusicInfo(id, cb) {
@@ -195,7 +191,17 @@
       changeOrderType(v) {
         this.orderType = v;
         Storage.set('orderType', v);
-        this.$store.commit('clearRandomHistory');
+        this.$store.dispatch('updateRandomHistory');
+      },
+      // 播放、暂停
+      updatePlayingStatus(status) {
+        this.playerDom[['pause', 'play'][Number(status)]]();
+        this.$store.dispatch('updatePlayingStatus', status);
+      },
+      // 切歌。包括上一首。下一首
+      cutSong(type) {
+        this.playerDom.pause();
+        this.$store.dispatch(type);
       }
     }
   }

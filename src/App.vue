@@ -31,11 +31,7 @@
           q.equalTo('userId', 'a605fbce83');
           return q;
         },
-        (res) => {
-          this.$store.state.sysObjectId = res.objectId;
-          this.$store.state.sysSongs = res.tags;
-          this.$store.state.sysTags = Object.keys(res.tags);
-        }
+        (res) => this.$store.dispatch('setSysTag', res),
       );
       Storage.queryBmob(
         'MusicSongs',
@@ -44,15 +40,7 @@
           q.limit(1000);
           return q;
         },
-        (res) => {
-          const allSongs = {};
-          res.forEach((item) => allSongs[item.objectId] = item);
-          this.$store.state.allSongs = allSongs;
-          this.$store.commit('updatePlayNow', {
-            obj: res[res.length - 10],
-          });
-          this.$store.commit('changeShowList', Object.values(allSongs));
-        },
+        (res) => this.$store.dispatch('setAllSongs', res),
         null,
         'find'
       );

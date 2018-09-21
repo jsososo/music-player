@@ -4,16 +4,16 @@
     <div class="tag-list">
       <div
         :class="`tag-item
-        ${$store.state.tagInfo.isSys && $store.state.tagInfo.selected === '' && 'selected'}
-        ${$store.state.tagInfo.playing === '' && 'playing'}`"
-        @click="$store.commit('updateSelectedTag', '')"
+        ${tagInfo.isSys && tagInfo.selected === '' && 'selected'}
+        ${tagInfo.playing === '' && 'playing'}`"
+        @click="$store.dispatch('updateSelectedTag', '')"
       >全部</div>
       <div
         :class="`tag-item
-        ${$store.state.tagInfo.isSys && $store.state.tagInfo.selected === item && 'selected'}
-        ${$store.state.tagInfo.playing === item && 'playing'}`"
-        v-for="(item, index) in $store.state.sysTags" :key="`tag-${item}-${index}`"
-        @click="$store.commit('updateSelectedTag', item)"
+        ${tagInfo.isSys && tagInfo.selected === item && 'selected'}
+        ${tagInfo.playing === item && 'playing'}`"
+        v-for="(item, index) in sysTagList" :key="`tag-${item}-${index}`"
+        @click="$store.dispatch('updateSelectedTag', item)"
       >{{item}}
       </div>
     </div>
@@ -29,6 +29,14 @@
         tagType: 'sys',
       }
     },
+    computed: {
+      sysTagList() {
+        return this.$store.getters.getTagList();
+      },
+      tagInfo() {
+        return this.$store.getters.getTagInfo;
+      },
+    }
   }
 </script>
 
