@@ -21,17 +21,19 @@
       }
     },
     created() {
+      const { dispatch } = this.$store;
       if (!Storage.get('orderType')) {
         Storage.set('orderType', 'liebiao')
       }
       this.defaultActive = window.location.hash.split('/')[1];
+      Storage.logIn(null, (res) => dispatch('updateUser', JSON.parse(JSON.stringify(res))));
       Storage.queryBmob(
         'MusicTag',
         (q) => {
           q.equalTo('userId', 'a605fbce83');
           return q;
         },
-        (res) => this.$store.dispatch('setSysTag', res),
+        (res) => dispatch('setSysTag', res),
       );
       Storage.queryBmob(
         'MusicSongs',
@@ -40,7 +42,7 @@
           q.limit(1000);
           return q;
         },
-        (res) => this.$store.dispatch('setAllSongs', res),
+        (res) => dispatch('setAllSongs', res),
         null,
         'find'
       );

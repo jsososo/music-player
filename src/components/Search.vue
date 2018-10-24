@@ -2,20 +2,29 @@
   <div class="mb_20">
     <el-radio-group v-model="sOpt">
       <el-radio-button label="列表内"></el-radio-button>
-      <el-radio-button label="站内"></el-radio-button>
-      <!--<el-radio-button label="QQ音乐"></el-radio-button>-->
+      <!--<el-radio-button label="站内"></el-radio-button>-->
+      <el-radio-button label="QQ音乐"></el-radio-button>
     </el-radio-group>
     <input type="text" class="search-input" placeholder="找点什么吧" v-model="search">
+    <Avatar />
   </div>
 </template>
 
 <script>
+  import Avatar from '@/components/Avatar';
+  import request from '../assets/utils/request';
   export default {
     name: "Search",
+    components: { Avatar },
     data() {
       return {
         sOpt: '列表内',
         search: '',
+      }
+    },
+    computed: {
+      allSongs() {
+        return this.$store.getters.getAllSongs;
       }
     },
     watch: {
@@ -26,6 +35,31 @@
             isAll: this.sOpt === '站内',
           };
           this.$store.dispatch('searchMusic', data);
+        } else {
+          request.qq({
+            apiName: 'QQ_SEARCH',
+            data: {
+              p: 1,
+              n: 100,
+              w: v,
+            }
+          }, (res) => {
+            const result = res.data.song.list.map((item) => {
+              const sItem = {
+                from: 'qq',
+                album: item.albumname,
+                albummid: item.albummid,
+                title: item.songname,
+                songmid: item.songmid,
+                artist: item.singer.map(s => s.name).join('/'),
+                objectId: item.songmid,
+              };
+              this.allSongs[sItem.objectId] = sItem;
+              return sItem;
+            });
+            this.$store.dispatch('updateAllSongs', this.allSongs);
+            this.$store.dispatch('updateShowList', result);
+          })
         }
       },
       sOpt(v) {

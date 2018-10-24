@@ -1,4 +1,4 @@
-import { message } from 'element-ui';
+import { Message } from 'element-ui';
 const localStorage = window.localStorage;
 
 const saveBmob = (obj, cb, errCb) => {
@@ -126,7 +126,7 @@ const Storage = {
     user.signUp(null, {
       success: cb,
       error: () => {
-        message.error('注册失败了 = =||');
+        Message.error('注册失败了 = =||');
       },
     });
   },
@@ -135,21 +135,15 @@ const Storage = {
   *  用户登录
   * */
   logIn(userInfo, cb) {
-    if (!userInfo) {
-      const storageInfo = Storage.get('user');
-      if (!storageInfo) {
-        return;
-      }
-      userInfo = {
-        username: storageInfo.split('-')[0],
-        password: storageInfo.split('-')[1].split('').reverse().join(''),
-      };
-    }
-    const { username, password } = userInfo;
+    const params = userInfo || {
+      username: Storage.get('username'),
+      password: Storage.get('uid').split('').reverse().join(''),
+    };
+    const { username, password } = params;
     Bmob.User.logIn(username, password, {
       success: cb,
       error: () => {
-        message.error('登录失败了 TAT');
+        userInfo && Message.error('登录失败了 TAT');
       },
     });
   },
@@ -164,14 +158,14 @@ const Storage = {
     });
     user.save(null, {
       success: () => {
-        message.success('修改成功(*^▽^*)');
+        Message.success('修改成功(*^▽^*)');
         let storageInfo = Storage.get('user');
         storageInfo = `${userInfo.username}-${storageInfo.split('-')[1]}`;
         Storage.set('user', storageInfo);
         cb();
       },
       error: () => {
-        message.warning('保存失败了 QAQ');
+        Message.warning('保存失败了 QAQ');
       },
     });
   },

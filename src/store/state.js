@@ -1,6 +1,8 @@
 export default {
   sysTags: [],
   allSongs: {},
+  userTags: [],
+  userSongs: {},
   playNow: {
     cover: '',
   },
@@ -26,4 +28,5 @@ export default {
   },
   sysSongs: {'安静': []},
   downloading: false,
+  user: {},
 };

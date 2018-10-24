@@ -1,3 +1,15 @@
+// 更新用户的tag
+export const UPDATE_USER_TAG = 'UPDATE_USER_TAG';
+
+// 更新用户
+export const UPDATE_USER = 'UPDATE_USER';
+
+// 更显展示列表
+export const UPDATE_SHOW_LIST = 'UPDATE_SHOW_LIST';
+
+// 更新allSongs
+export const UPDATE_ALL_SONGS = 'UPDATE_ALL_SONGS';
+
 // 搜索
 export const SEARCH_MUSIC = 'SEARCH_MUSIC';
 

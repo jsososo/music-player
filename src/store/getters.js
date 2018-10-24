@@ -1,4 +1,8 @@
 export default {
+  // 获取用户信息
+  getUserInfo: (state) => {
+    return state.user;
+  },
   // 获取系统的tag列表
   getTagList: (state) => (isSys = true) => {
     return isSys ? state.sysTags : [];

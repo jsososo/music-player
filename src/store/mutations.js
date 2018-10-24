@@ -3,6 +3,18 @@ import Storage from "../assets/utils/Storage";
 import Num from "../assets/utils/num";
 
 export default {
+  [types.UPDATE_USER_TAG](state, data) {
+    console.log(data);
+  },
+  [types.UPDATE_USER](state, data) {
+    state.user = { ...(state.user), ...data };
+  },
+  [types.UPDATE_SHOW_LIST](state, data) {
+    state.showList = data;
+  },
+  [types.UPDATE_ALL_SONGS](state, data) {
+    state.allSongs = data;
+  },
   // 搜索歌曲
   [types.SEARCH_MUSIC](state, data) {
     const { search, isAll } = data;
@@ -97,7 +109,10 @@ export default {
     state.downloading = data;
   },
   [types.UPDATE_SONG_DETAIL](state, { info, index }) {
-    state.allSongs[index] = info;
+    state.allSongs[index] = {
+      ...(state.allSongs[index]),
+      ...info,
+    };
   },
   [types.UPDATE_PLAYING_STATUS](state, data) {
     state.playing = data;

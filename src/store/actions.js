@@ -1,7 +1,20 @@
 import * as types from './mutationsTypes';
 import Num from '../assets/utils/num';
+import Storage from '../assets/utils/Storage';
 
 export default {
+  updateUser: ({ commit }, data) => {
+    Storage.queryBmob('MusicTag', (q) => {
+      q.equalTo('userId', data.objectId);
+      return q;
+    }, (res) => {
+      commit(types.UPDATE_USER_TAG, res);
+    });
+    commit(types.UPDATE_USER, data);
+  },
+  updateShowList: ({ commit }, data) => {
+    commit(types.UPDATE_SHOW_LIST, data);
+  },
   searchMusic: ({ commit }, data) => {
     commit(types.SEARCH_MUSIC, data);
   },
@@ -42,6 +55,9 @@ export default {
     commit(types.SET_ALL_SONGS, allSongs);
     commit(types.CHANGE_SHOW_LIST, Object.values(allSongs));
     commit(types.UPDATE_PLAY_NOW, data[Num(Math.random() * (data.length - 1))]);
+  },
+  updateAllSongs: ({ commit }, data) => {
+    commit(types.UPDATE_ALL_SONGS, data);
   },
   // 更新播放状态
   updatePlayingStatus: ({ commit }, data) => {

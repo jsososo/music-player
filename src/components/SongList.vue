@@ -105,10 +105,10 @@
       word-wrap: break-word;
     }
     .song-order {
-      width: 8%
+      width: 10%
     }
     .song-title {
-      width: 57%;
+      width: 55%;
     }
     .song-artist {
       width: 35%;

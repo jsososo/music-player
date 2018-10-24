@@ -80,6 +80,7 @@
   import Num from '../assets/utils/num';
   import Storage from '../assets/utils/Storage';
   import { mapGetters } from 'vuex';
+  import request from '../assets/utils/request';
 
   export default {
     name: "PlayerPage",
@@ -102,13 +103,14 @@
         downloading: 'isDownloading',
         playerInfo: 'getPlayerInfo',
         loading: 'isLoading',
+        allSongs: 'getAllSongs',
       }),
     },
     watch: {
       playNow(v) {
         this.currentTime = 0;
         const dispatch = this.$store.dispatch;
-        if (!v.url) {
+        if (!v.url && !v.from) {
           const id = v.objectId;
           dispatch('setLoading', true);
           this.getMusicInfo(id, (res) => {
@@ -118,6 +120,39 @@
             }
             dispatch('updateSongDetail', { info: res, index: id });
           });
+        } else if (v.from === 'qq') {
+          if (v.url) {
+            return;
+          }
+          const params = {
+            data: {
+              req_0: {
+                module: "vkey.GetVkeyServer", // 管他什么写死就好了
+                method: "CgiGetVkey",  // 管他什么写死就好了
+                param: {
+                  guid: "5339940689", // 管他什么写死就好了
+                  songmid: [v.objectId],  // 歌曲的mid
+                  songtype: [0], // 管他什么写死就好了
+                  uin: "", // 用户的qq号，传不传无所谓
+                  platform: "20",  // 管他什么写死就好了
+                },
+              },
+            },
+          };
+          params.data = JSON.stringify(params.data);
+          request.qq({
+            apiName: 'QQ_SONG_INFO',
+            data: params,
+          }, (res) => {
+            const resData = res.req_0.data;
+            const song = {
+              url: `${resData.sip[0]}${resData.midurlinfo[0].purl}`,
+            };
+            dispatch('updateSongDetail', { info: song, index: v.objectId });
+            if (this.playNow.objectId === v.objectId) {
+              dispatch('updatePlayNow', this.allSongs[v.objectId]);
+            }
+          })
         }
       }
     },
@@ -137,14 +172,10 @@
           pDom.play();
         }
         dispatch('setDownLoading', false);
-        dispatch('updatePlayerInfo', {
-          duration: pDom.duration,
-        });
+        dispatch('updatePlayerInfo', { duration: pDom.duration });
       };
       // audio正在加载音乐
-      pDom.onwaiting = () => {
-        dispatch('setDownLoading', true);
-      };
+      pDom.onwaiting = () => dispatch('setDownLoading', true);
       // audio放完了
       pDom.onended = () => {
         if (this.orderType !== 'danquxunhuan') {
@@ -156,14 +187,10 @@
       };
       // 音乐播放时进度条
       pDom.ontimeupdate = () => {
-        if (!this.stopUpdateCurrent) {
-          this.currentTime = this.playNow.url ? pDom.currentTime : 0;
-        }
+        !this.stopUpdateCurrent && (this.currentTime = this.playNow.url ? pDom.currentTime : 0);
       };
       // 当点击进度条的滑块时需要停止进度的判断，否则松开鼠标后onchange事件无法返回正确的value
-      sDom.onmousedown = () => {
-        this.stopUpdateCurrent = true;
-      };
+      sDom.onmousedown = () => this.stopUpdateCurrent = true;
     },
     methods: {
       getMusicInfo(id, cb) {
@@ -174,9 +201,7 @@
             return q;
           },
           cb,
-          () => {
-            alert('down不下来');
-          }
+          () => alert('down不下来'),
         )
       },
       formatTooltip(v) {

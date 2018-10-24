@@ -4,7 +4,7 @@
       <el-upload
         ref="upload"
         drag
-        accept=".mp3, .m4a"
+        accept=".mp3,.m4a"
         action=""
         show-file-list
         :auto-upload="false"

@@ -1,3 +1,9 @@
 module.exports = {
-  assetsDir: 'music'
+  assetsDir: undefined,
+  baseUrl: undefined,
+  outputDir: undefined,
+  runtimeCompiler: undefined,
+  productionSourceMap: undefined,
+  parallel: undefined,
+  css: undefined
 }
