@@ -5,11 +5,11 @@ const request = {
     data.url = apiList[data.apiName || 'TEST'] || '/test.json';
     data.dataType = 'jsonp';
     data.data = data.data || {};
-    data.data.jsonpCallback = 'MusicJsonCallback';
-    data.data.callback = 'MusicJsonCallback';
+    data.data.jsonpCallback = data.cb || 'MusicJsonCallback';
+    data.data.callback = data.cb || 'MusicJsonCallback';
 
     try {
-      window.MusicJsonCallback = (data) => cb(data);
+      window[data.cb || 'MusicJsonCallback'] = (data) => cb(data);
       $.ajax(data);
     } catch (err) {
       errCb(err);

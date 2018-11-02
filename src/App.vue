@@ -11,6 +11,7 @@
 <script>
   import Storage from './assets/utils/Storage';
   import Player from './components/Player';
+  import request from './assets/utils/request';
 
   export default {
     name: 'App',
@@ -27,7 +28,7 @@
       }
       this.defaultActive = window.location.hash.split('/')[1];
       Storage.logIn(null, (res) => dispatch('updateUser', JSON.parse(JSON.stringify(res))));
-      Storage.queryBmob(
+      /*Storage.queryBmob(
         'MusicTag',
         (q) => {
           q.equalTo('userId', 'a605fbce83');
@@ -45,7 +46,19 @@
         (res) => dispatch('setAllSongs', res),
         null,
         'find'
-      );
+      );*/
+      request.qq({
+        apiName: 'QQ_LIST',
+        data: {
+          cid: 205360838, // 管他什么写死就好了
+          userid: 956581739, // qq号
+          reqfrom: 1,
+        }
+      }, (res) => console.log(res));
+      request.qq({
+        apiName: '11',
+        cb: 'playlistinfoCallback',
+      })
     },
   }
 </script>

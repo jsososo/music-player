@@ -85,6 +85,7 @@
     transition: 0.5s;
     border-bottom: 1px solid rgba(255,255,255,0.2);
     text-overflow: ellipsis;
+    cursor: default;
 
     &.playing {
       background: rgba(255,255,255,0.2);

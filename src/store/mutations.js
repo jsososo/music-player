@@ -26,7 +26,7 @@ export default {
     }
     const RE = new RegExp(search, 'i');
     state.showList = findList.filter((s) => (
-      s.title.match(RE) || s.artist.match(RE) || s.album.match(RE) || s.search.match(RE)
+      s.title.match(RE) || s.artist.match(RE) || s.album.match(RE) || (s.search && s.search.match(RE))
     ))
   },
   // 更新选中的的tag
@@ -43,13 +43,15 @@ export default {
     state.loading = false;
     const orderType = Storage.get('orderType');
     let nI = 0;
+    let nId = '';
     const id = state.playNow.objectId;
     if (orderType === 'suiji') {
       const rL = state.randomHistory.list;
       const rI = state.randomHistory.index;
       // 随机时候的上一首，去找真的上一首
       if (rI > 0) {
-        nI = state.playingList.indexOf(rL[rI - 1]);
+        nId = rL[rI - 1];
+        nI = state.playingList.indexOf(nId);
         state.randomHistory.index -= 1;
       } else {
         //  超出播放记录了，随便选一首
@@ -64,7 +66,8 @@ export default {
       }
     }
     state.playerInfo.duration = 0;
-    state.playNow = state.allSongs[state.playingList[nI]];
+    // 如果是搜索的歌曲，那他不会再playingList里
+    state.playNow = state.allSongs[nI > -1 ? state.playingList[nI] : nId];
   },
   // 下一首
   [types.PLAY_NEXT](state) {
@@ -72,6 +75,7 @@ export default {
     const id = state.playNow.objectId;
     state.loading = false;
     let nI = 0;
+    let nId = '';
     // 随机播放
     if (orderType === 'suiji') {
       const rL = state.randomHistory.list;
@@ -82,7 +86,8 @@ export default {
         rL.push(state.playingList[nI]);
       } else {
         // 点过上一首之后再点下一首的随机播放。为了保持播放顺序，从随机播放历史中取值。
-        nI = state.playingList.indexOf(rL[rI]);
+        nId = rL[rI];
+        nI = state.playingList.indexOf(nId);
       }
       state.randomHistory.index += 1;
     } else {
@@ -92,7 +97,8 @@ export default {
       }
     }
     state.playerInfo.duration = 0;
-    state.playNow = state.allSongs[state.playingList[nI]];
+    // 如果是搜索的歌曲，那他不会再playingList里
+    state.playNow = state.allSongs[nI > -1 ? state.playingList[nI] : nId];
   },
   // 更新随机播放历史
   [types.UPDATE_RANDOM_HISTORY](state, data) {
@@ -105,9 +111,11 @@ export default {
   [types.UPDATE_PLAYER_INFO](state, data) {
     state.playerInfo = data;
   },
+  // loading状态
   [types.SET_DOWNLOADING](state, data) {
     state.downloading = data;
   },
+  // 更新歌曲信息
   [types.UPDATE_SONG_DETAIL](state, { info, index }) {
     state.allSongs[index] = {
       ...(state.allSongs[index]),
@@ -130,7 +138,7 @@ export default {
     }
 
     if (!state.tagInfo.playing) {
-      state.playingList = Object.keys(state.allSongs);
+      state.playingList = Object.keys(state.allSongs).filter(id => !state.allSongs[id].from || state.allSongs[id].updateBmob);
     } else {
       state.playingList = state.sysSongs[state.tagInfo.playing];
     }

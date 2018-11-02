@@ -124,6 +124,7 @@
           if (v.url) {
             return;
           }
+          // 获取音乐的url
           const params = {
             data: {
               req_0: {
@@ -152,7 +153,7 @@
             if (this.playNow.objectId === v.objectId) {
               dispatch('updatePlayNow', this.allSongs[v.objectId]);
             }
-          })
+          });
         }
       }
     },

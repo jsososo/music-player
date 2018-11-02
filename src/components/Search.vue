@@ -38,11 +38,7 @@
         } else {
           request.qq({
             apiName: 'QQ_SEARCH',
-            data: {
-              p: 1,
-              n: 100,
-              w: v,
-            }
+            data: { p: 1, n: 100, w: v, cr: 1 },
           }, (res) => {
             const result = res.data.song.list.map((item) => {
               const sItem = {
@@ -53,6 +49,7 @@
                 songmid: item.songmid,
                 artist: item.singer.map(s => s.name).join('/'),
                 objectId: item.songmid,
+                cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${item.albummid}.jpg`,
               };
               this.allSongs[sItem.objectId] = sItem;
               return sItem;
