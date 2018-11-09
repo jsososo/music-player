@@ -36,27 +36,7 @@
           };
           this.$store.dispatch('searchMusic', data);
         } else {
-          request.qq({
-            apiName: 'QQ_SEARCH',
-            data: { p: 1, n: 100, w: v, cr: 1 },
-          }, (res) => {
-            const result = res.data.song.list.map((item) => {
-              const sItem = {
-                from: 'qq',
-                album: item.albumname,
-                albummid: item.albummid,
-                title: item.songname,
-                songmid: item.songmid,
-                artist: item.singer.map(s => s.name).join('/'),
-                objectId: item.songmid,
-                cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${item.albummid}.jpg`,
-              };
-              this.allSongs[sItem.objectId] = sItem;
-              return sItem;
-            });
-            this.$store.dispatch('updateAllSongs', this.allSongs);
-            this.$store.dispatch('updateShowList', result);
-          })
+          this.searchQQMusic(v);
         }
       },
       sOpt(v) {
@@ -66,8 +46,35 @@
             isAll: v === '站内',
           };
           this.$store.dispatch('searchMusic', data);
+        } else {
+          this.searchQQMusic(this.search);
         }
       }
+    },
+    methods: {
+      searchQQMusic(v) {
+        request.qq({
+          apiName: 'QQ_SEARCH',
+          data: { p: 1, n: 100, w: v, cr: 1, aggr: 1 },
+        }, (res) => {
+          const result = res.data.song.list.map((item) => {
+            const sItem = {
+              from: 'qq',
+              album: item.albumname,
+              albummid: item.albummid,
+              title: item.songname,
+              songmid: item.songmid,
+              artist: item.singer.map(s => s.name).join('/'),
+              objectId: item.songmid,
+              cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${item.albummid}.jpg`,
+            };
+            this.allSongs[sItem.objectId] = sItem;
+            return sItem;
+          });
+          this.$store.dispatch('updateAllSongs', this.allSongs);
+          this.$store.dispatch('updateShowList', { list: result });
+        })
+      },
     }
   }
 </script>

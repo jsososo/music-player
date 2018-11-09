@@ -21,45 +21,29 @@
         defaultActive: '/',
       }
     },
+    computed: {
+      user() {
+        return this.$store.getters.getUserInfo;
+      },
+    },
     created() {
       const { dispatch } = this.$store;
       if (!Storage.get('orderType')) {
         Storage.set('orderType', 'liebiao')
       }
       this.defaultActive = window.location.hash.split('/')[1];
-      Storage.logIn(null, (res) => dispatch('updateUser', JSON.parse(JSON.stringify(res))));
-      /*Storage.queryBmob(
-        'MusicTag',
-        (q) => {
-          q.equalTo('userId', 'a605fbce83');
-          return q;
-        },
-        (res) => dispatch('setSysTag', res),
-      );
-      Storage.queryBmob(
-        'MusicSongs',
-        (q) => {
-          q.select('artist', 'album', 'title', 'search');
-          q.limit(1000);
-          return q;
-        },
-        (res) => dispatch('setAllSongs', res),
-        null,
-        'find'
-      );*/
-      request.qq({
-        apiName: 'QQ_LIST',
-        data: {
-          cid: 205360838, // 管他什么写死就好了
-          userid: 956581739, // qq号
-          reqfrom: 1,
+      Storage.logIn(null, (res) => {
+        dispatch('updateUser', JSON.parse(JSON.stringify(res)));
+        if (this.user.bindQQ) {
+          request.getQQList(this);
+        } else {
+          this.$message.info('建议点击头像去绑定企鹅号~');
         }
-      }, (res) => console.log(res));
-      request.qq({
-        apiName: '11',
-        cb: 'playlistinfoCallback',
-      })
+      });
     },
+    methods: {
+
+    }
   }
 </script>
 

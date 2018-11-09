@@ -12,10 +12,6 @@
       <span class="info-key">专辑：</span>
       <span>{{playNow.album}}</span>
     </div>
-    <div class="info-row">
-      <span class="info-key">标签：</span>
-      <span>{{$store.state.nPSTags.join('、')}}</span>
-    </div>
   </div>
 </template>
 
@@ -36,6 +32,7 @@
     padding-left: 30px;
     font-size: 16px;
     margin-top: 50px;
+    width: 400px;
 
     .info-row {
       margin-bottom: 10px;

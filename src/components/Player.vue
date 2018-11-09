@@ -141,6 +141,7 @@
             },
           };
           params.data = JSON.stringify(params.data);
+          // 请求获取歌曲的url
           request.qq({
             apiName: 'QQ_SONG_INFO',
             data: params,

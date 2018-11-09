@@ -39,6 +39,7 @@
       },
     },
     created() {
+      !this.user.bindQQ && this.$message.info('绑定企鹅号哟');
     },
     methods: {
       bindNewQQ() {
@@ -47,6 +48,7 @@
           this.$store.dispatch('updateUser', params);
           this.inputBindQQ = '';
           this.editBindQQ = false;
+          this.$message.success('返回刷新就ok啦～');
         })
       }
     }

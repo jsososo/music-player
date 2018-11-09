@@ -1,8 +1,8 @@
 <template>
   <div class="song-list">
-    <div :class="playNow.objectId === s.objectId ? 'song-item playing' : 'song-item'"
+    <div :class="s.objectId ? (playNow.objectId === s.objectId ? 'song-item playing' : 'song-item') : 'song-item song-empty'"
          v-for="(s, i) in showList"
-         :key="s.objectId"
+         :key="`${s.objectId}-${i}`"
          @click="playMusic(s.objectId)">
       <span class="song-order">{{i + 1}}</span>
       <span class="song-title">{{s.title}}</span>
@@ -30,6 +30,10 @@
     },
     methods: {
       playMusic(id, play = true) {
+        if (!id) {
+          this.$message.info('企鹅音乐暂无版权～');
+          return;
+        }
         const dispatch = this.$store.dispatch;
         if (play) {
           dispatch('updatePlayingStatus', true);
@@ -90,6 +94,10 @@
     &.playing {
       background: rgba(255,255,255,0.2);
       border-bottom: 1px solid rgba(255,255,255,0.9);
+    }
+
+    &.song-empty {
+      opacity: 0.55;
     }
 
     &:hover {

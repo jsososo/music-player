@@ -17,7 +17,9 @@
         <el-input style="width: 200px;margin-left: 10px" type="password" @keyup.enter.native="login" @input="inputPass" />
       </div>
       <div style="padding-left: 60px;">
-        <el-button class="login-btn">去注册</el-button>
+        <a href="//jsososo.com/#/user/info" class="ml_20 inline-block">
+          <el-button class="login-btn">去注册</el-button>
+        </a>
         <el-button class="login-btn" type="primary" @click="login">登陆</el-button>
       </div>
     </el-dialog>
@@ -27,6 +29,7 @@
 <script>
   import md5 from 'js-md5';
   import Storage from '../assets/utils/Storage';
+  import request from '../assets/utils/request';
   export default {
     name: "Avatar",
     data() {
@@ -58,10 +61,12 @@
         Storage.logIn(
           { username, password: md5Pass },
           (res) => {
-            const user = JSON.parse(JSON.stringify(res))
+            const user = JSON.parse(JSON.stringify(res));
             dispatch('updateUser', user);
             Storage.set('username', username);
             Storage.set('uid', md5Pass.split('').reverse().join(''));
+            user.bindQQ && request.getQQList(this);
+            !user.bindQQ && (window.location = '#/me');
             this.showLoginDialog = false;
           }
         );
