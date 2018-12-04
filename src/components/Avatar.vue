@@ -8,21 +8,35 @@
       :before-close="clickAvatar"
       :center="false"
     >
-      <div>
-        <div class="inline-block w_50">账号：</div>
+      <div style="width: 300px; text-align: center">
+        <div class="inline-block">qq号：</div>
         <el-input style="width: 200px;margin-left: 10px" v-model="username"/>
       </div>
-      <div class="mt_10 mb_10">
-        <div class="inline-block w_50">密码：</div>
-        <el-input style="width: 200px;margin-left: 10px" type="password" @keyup.enter.native="login" @input="inputPass" />
-      </div>
-      <div style="padding-left: 60px;">
-        <a href="//jsososo.com/#/user/info" class="ml_20 inline-block">
-          <el-button class="login-btn">去注册</el-button>
-        </a>
-        <el-button class="login-btn" type="primary" @click="login">登陆</el-button>
+      <div>
+        <el-button class="login-btn mt_20" style="width: 200px;" type="primary" @click="login">ok！</el-button>
       </div>
     </el-dialog>
+    <!--<el-dialog-->
+      <!--width="400px"-->
+      <!--:visible.sync="showLoginDialog"-->
+      <!--:before-close="clickAvatar"-->
+      <!--:center="false"-->
+    <!--&gt;-->
+      <!--<div>-->
+        <!--<div class="inline-block w_50">账号：</div>-->
+        <!--<el-input style="width: 200px;margin-left: 10px" v-model="username"/>-->
+      <!--</div>-->
+      <!--<div class="mt_10 mb_10">-->
+        <!--<div class="inline-block w_50">密码：</div>-->
+        <!--<el-input style="width: 200px;margin-left: 10px" type="password" @keyup.enter.native="login" @input="inputPass" />-->
+      <!--</div>-->
+      <!--<div style="padding-left: 60px;">-->
+        <!--<a href="//jsososo.com/#/user/info" class="ml_20 inline-block">-->
+          <!--<el-button class="login-btn">去注册</el-button>-->
+        <!--</a>-->
+        <!--<el-button class="login-btn" type="primary" @click="login">登陆</el-button>-->
+      <!--</div>-->
+    <!--</el-dialog>-->
   </div>
 </template>
 
@@ -49,27 +63,29 @@
         this.md5Pass = md5(v);
       },
       clickAvatar() {
-        if (this.user.username) {
-          window.location = '#/me';
-        } else {
-          this.showLoginDialog = !this.showLoginDialog;
-        }
+        this.username = Storage.get('uQ');
+        this.showLoginDialog = !this.showLoginDialog;
       },
       login() {
-        const { dispatch } = this.$store;
-        const { username, md5Pass } = this;
-        Storage.logIn(
-          { username, password: md5Pass },
-          (res) => {
-            const user = JSON.parse(JSON.stringify(res));
-            dispatch('updateUser', user);
-            Storage.set('username', username);
-            Storage.set('uid', md5Pass.split('').reverse().join(''));
-            user.bindQQ && request.getQQList(this);
-            !user.bindQQ && (window.location = '#/me');
-            this.showLoginDialog = false;
-          }
-        );
+        Storage.set('uQ', this.username);
+        if (this.username) {
+          request.getQQList(this);
+        }
+        this.showLoginDialog = false;
+        // const { dispatch } = this.$store;
+        // const { username, md5Pass } = this;
+        // Storage.logIn(
+        //   { username, password: md5Pass },
+        //   (res) => {
+        //     const user = JSON.parse(JSON.stringify(res));
+        //     dispatch('updateUser', user);
+        //     Storage.set('username', username);
+        //     Storage.set('uid', md5Pass.split('').reverse().join(''));
+        //     user.bindQQ && request.getQQList(this);
+        //     !user.bindQQ && (window.location = '#/me');
+        //     this.showLoginDialog = false;
+        //   }
+        // );
       },
     }
   }

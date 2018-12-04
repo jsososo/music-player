@@ -105,7 +105,7 @@ export default {
   },
   // 更新播放器信息
   [types.UPDATE_PLAYER_INFO](state, data) {
-    state.playerInfo = data;
+    state.playerInfo = { ...state.playerInfo, ...data};
   },
   // loading状态
   [types.SET_DOWNLOADING](state, data) {
@@ -135,7 +135,7 @@ export default {
     if (!state.tagInfo.playing) {
       state.playingList = Object.keys(state.allSongs).filter(id => !state.allSongs[id].from || state.allSongs[id].updateBmob);
     } else {
-      state.playingList = state.sysSongs[state.tagInfo.playing.dissid].filter(item => item.songmid);
+      state.playingList = state.showList.filter(item => item.songmid);
     }
     if (!state.playingList.length) {
       state.playingList = state.showList.filter(item => item.objectId);
@@ -163,5 +163,9 @@ export default {
   },
   [types.SET_LOADING](state, data) {
     state.loading = data;
+  },
+  // 切换右侧的现实内容
+  [types.CHANGE_LIST_CONTENT](state, data) {
+    state.listContent = data;
   }
 }

@@ -1,6 +1,7 @@
 import apiList from './apiList';
 import $ from 'jquery';
 import axios from 'axios';
+import Storage from './Storage';
 const request = {
   qq(data, cb = (res) => console.log(res), errCb = (err) => console.error(err))  {
     data.url = apiList[data.apiName || 'TEST'] || '/test.json';
@@ -31,12 +32,12 @@ const request = {
   // 获取qq音乐列表
   getQQList(_this) {
     const { dispatch } = _this.$store;
-    const { bindQQ } = _this.user;
+    const uQ = Storage.get('uQ');
     request.qq({
       apiName: 'QQ_LIST',
       data: {
         cid: 205360838, // 管他什么写死就好了
-        userid: bindQQ, // qq号
+        userid: uQ, // qq号
         reqfrom: 1,
       }
     }, (res) => {
@@ -46,13 +47,13 @@ const request = {
       const favTag = { title: '我喜欢的', dissid: id };
       myFav.title = '我喜欢的';
       list.unshift(favTag);
-      request.getQQMyFavList(id, bindQQ, _this);
+      request.getQQMyFavList(id, uQ, _this);
       dispatch('setSysTag', list);
       dispatch('updateSelectedTag', id);
     });
   },
   // 获取我喜欢的音乐列表
-  getQQMyFavList(id, bindQQ, _this) {
+  getQQMyFavList(id, uQ, _this) {
     const { dispatch } = _this.$store;
     const allSongs = {};
     request.qq({
@@ -63,7 +64,7 @@ const request = {
         utf8: 1,
         disstid: id,
         jsonpCallback: 'playlistinfoCallback',
-        loginUin: bindQQ,
+        loginUin: uQ,
       },
     }, (res) => {
       const list = res.cdlist[0].songlist.map((s) => {

@@ -32,14 +32,12 @@
         Storage.set('orderType', 'liebiao')
       }
       this.defaultActive = window.location.hash.split('/')[1];
-      Storage.logIn(null, (res) => {
-        dispatch('updateUser', JSON.parse(JSON.stringify(res)));
-        if (this.user.bindQQ) {
-          request.getQQList(this);
-        } else {
-          this.$message.info('建议点击头像去绑定企鹅号~');
-        }
-      });
+      const uQ = Storage.get('uQ');
+      if (uQ) {
+        request.getQQList(this);
+      } else {
+        this.$message.info('点右上角头像绑定企鹅号');
+      }
     },
     methods: {
 

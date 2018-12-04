@@ -62,5 +62,8 @@ export default {
   // 更新播放状态
   updatePlayingStatus: ({ commit }, data) => {
     commit(types.UPDATE_PLAYING_STATUS, data);
+  },
+  setListContent: ({ commit }, data) => {
+    commit(types.CHANGE_LIST_CONTENT, data);
   }
 }

@@ -51,3 +51,6 @@ export const SET_ALL_SONGS = 'SET_ALL_SONGS';
 
 // 更新正在播放的音乐
 export const UPDATE_PLAY_NOW = 'UPDATE_PLAY_NOW';
+
+// 切换右侧现实内容
+export const CHANGE_LIST_CONTENT = 'CHANGE_LIST_CONTENT';

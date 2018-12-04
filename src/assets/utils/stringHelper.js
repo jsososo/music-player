@@ -49,6 +49,24 @@ export function shortString(str, length = 20) {
   return str.length > length ? `${str.substr(0, length - 3)}...` : str;
 }
 
+export function handleLyric(str) {
+  const dom = document.createElement('div');
+  dom.innerHTML = str;
+  const arr = dom.innerHTML.split('\n');
+  const result = [];
+  arr.forEach((item) => {
+    const time = item.match(/^\[(\d\d:\d\d.\d\d)\]/);
+    if (time) {
+      const timeArr = time[1].split(':');
+      result.push({
+        time: Number(timeArr[0] * 6000) + Number(timeArr[1].replace('.', '')),
+        str: item.replace(time[0], ''),
+      })
+    }
+  })
+  return result;
+}
+
 export function u8ToBase64( bytes ) {
   var base64 = '';
   var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';

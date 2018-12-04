@@ -39,4 +39,8 @@ export default {
   isLoading(state) {
     return state.loading;
   },
+  // 获取右侧内容名
+  getListContent(state) {
+    return state.listContent;
+  }
 }

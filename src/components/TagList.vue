@@ -43,6 +43,7 @@
       selectTag(id) {
         const { dispatch } = this.$store;
         dispatch('updateSelectedTag', id);
+        dispatch('setListContent', 0);
         request.axiosReq({
           apiName: 'QQ_USER_LIST_DETAIL',
           cb: 'playlistinfoCallback',

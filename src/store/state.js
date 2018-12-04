@@ -29,4 +29,5 @@ export default {
   sysSongs: {'安静': []},
   downloading: false,
   user: {},
+  listContent: 0, // 右侧现实内容 0: 歌曲列表，1: 歌词
 };

@@ -81,6 +81,7 @@
   import Storage from '../assets/utils/Storage';
   import { mapGetters } from 'vuex';
   import request from '../assets/utils/request';
+  import { handleLyric } from "../assets/utils/stringHelper";
 
   export default {
     name: "PlayerPage",
@@ -145,15 +146,26 @@
           request.qq({
             apiName: 'QQ_SONG_INFO',
             data: params,
+            cb: 'getMusicUrl',
           }, (res) => {
             const resData = res.req_0.data;
             const song = {
               url: `${resData.sip[0]}${resData.midurlinfo[0].purl}`,
             };
-            dispatch('updateSongDetail', { info: song, index: v.objectId });
-            if (this.playNow.objectId === v.objectId) {
-              dispatch('updatePlayNow', this.allSongs[v.objectId]);
-            }
+            // 获取歌词
+            request.qq({
+              apiName: 'QQ_GET_LYRIC',
+              data: {
+                nobase64: 1,
+                songmid: v.objectId,
+              }
+            }, (res) => {
+              song.lyric = handleLyric(res.lyric);
+              dispatch('updateSongDetail', { info: song, index: v.objectId });
+              if (this.playNow.objectId === v.objectId) {
+                dispatch('updatePlayNow', this.allSongs[v.objectId]);
+              }
+            });
           });
         }
       }
@@ -164,7 +176,9 @@
       // 初始化音量
       this.volume = (Storage.get('volume') || 1) * 100;
 
+      // audio标签
       const pDom = this.playerDom;
+      // slider，进度条
       const sDom = document.getElementsByClassName('el-slider__button el-tooltip')[0];
       const dispatch = this.$store.dispatch;
 
@@ -174,7 +188,7 @@
           pDom.play();
         }
         dispatch('setDownLoading', false);
-        dispatch('updatePlayerInfo', { duration: pDom.duration });
+        dispatch('updatePlayerInfo', { duration: pDom.duration, current: 0 });
       };
       // audio正在加载音乐
       pDom.onwaiting = () => dispatch('setDownLoading', true);
@@ -190,6 +204,7 @@
       // 音乐播放时进度条
       pDom.ontimeupdate = () => {
         !this.stopUpdateCurrent && (this.currentTime = this.playNow.url ? pDom.currentTime : 0);
+        dispatch('updatePlayerInfo', { current: this.currentTime });
       };
       // 当点击进度条的滑块时需要停止进度的判断，否则松开鼠标后onchange事件无法返回正确的value
       sDom.onmousedown = () => this.stopUpdateCurrent = true;
