@@ -1,21 +1,23 @@
-# person-web-music
+# Vue 音乐播放器
 
-## Project setup
-```
-npm install
-```
+## 介绍
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+项目用 vue-cli 3.0 搭建，音乐接口等使用qq音乐，登陆账号为和个人博客的同一账号，目前只用来记录qq号信息。
 
-### Compiles and minifies for production
-```
-npm run build
-```
 
-### Lints and fixes files
-```
-npm run lint
-```
+## 接口
+
+接口都是自己从 企鹅音乐网站上拔的，自己整理了一下可以参考 http://jsososo.com/#/article?id=5a6254c0c4
+
+
+## 开发计划
+
++ 接入歌词  
++ 加入动态音频图
++ 接入加入歌单等功能
++ 接入推荐音乐、排行榜
+
+
+## 更新记录
+
+18-11-06: 接口更换为企鹅音乐
