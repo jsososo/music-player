@@ -1,6 +1,7 @@
 <template>
   <div id="app">
     <img src="./assets/img/bg-1.png" alt="" class="app-bg">
+    <img id="play-music-bg" alt="">
     <div class="main-container">
       <router-view/>
       <Player />
@@ -52,6 +53,20 @@
   }
   #app {
     height: 100vh;
+
+    #play-music-bg {
+      position: absolute;
+      z-index: 0;
+      top: 0;
+      left: 0;
+      width: 100%;
+      bottom: -10%;
+      -webkit-filter: blur(50px) brightness(60%);
+      -moz-filter: blur(50px) brightness(60%);
+      -o-filter: blur(50px) brightness(60%);
+      -ms-filter: blur(50px) brightness(60%);
+      filter: blur(50px) brightness(60%);
+    }
 
     .app-bg {
       position: relative;

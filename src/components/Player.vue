@@ -111,6 +111,7 @@
       playNow(v) {
         this.currentTime = 0;
         const dispatch = this.$store.dispatch;
+        document.getElementById('play-music-bg').src = v.cover;
         if (!v.url && !v.from) {
           const id = v.objectId;
           dispatch('setLoading', true);
