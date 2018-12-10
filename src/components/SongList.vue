@@ -30,6 +30,7 @@
     },
     methods: {
       playMusic(id, play = true) {
+        const pDom = document.getElementById('m-player');
         if (!id) {
           this.$message.info('企鹅音乐暂无版权～');
           return;
@@ -37,8 +38,13 @@
         const dispatch = this.$store.dispatch;
         if (play) {
           dispatch('updatePlayingStatus', true);
+          pDom.play();
         }
-        dispatch('updatePlayNow', this.allSongs[id])
+        if (this.playNow.objectId !== id) {
+          dispatch('updatePlayNow', this.allSongs[id])
+        } else {
+          pDom.currentTime = 0;
+        }
       },
     }
   }
@@ -53,7 +59,6 @@
     width: 550px;
     margin-top: 10px;
     margin-right: 20px;
-    min-height: 500px;
 
     &::-webkit-scrollbar
     {

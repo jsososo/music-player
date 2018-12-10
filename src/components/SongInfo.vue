@@ -3,6 +3,7 @@
     <div class="info-row">
       <span class="info-key">歌名：</span>
       <span>{{playNow.title}}</span>
+      <div class="ft_12 mt_5" style="margin-left: 58px; opacity: 0.7">{{playNow.albumdesc}}</div>
     </div>
     <div class="info-row">
       <span class="info-key">歌手：</span>

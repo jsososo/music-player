@@ -79,7 +79,7 @@
     .main-container {
       position: absolute;
       overflow-y: auto;
-      height: calc(100vh - 100px);
+      height: calc(100vh - 80px);
       top: 0;
       left: 0;
       display: inline-block;

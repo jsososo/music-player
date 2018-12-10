@@ -65,5 +65,8 @@ export default {
   },
   setListContent: ({ commit }, data) => {
     commit(types.CHANGE_LIST_CONTENT, data);
-  }
+  },
+  changeSearchKey: ({ commit }, data) => {
+    commit(types.CHANGE_SEARCH_KEY, data);
+  },
 }

@@ -26,7 +26,8 @@ export default {
     selected: '',
     playing: '',
   },
-  sysSongs: {'安静': []},
+  searchKey: '列表内', // 这是上面的搜索选项，列表內 || QQ音乐
+  sysSongs: {},
   downloading: false,
   user: {},
   listContent: 0, // 右侧现实内容 0: 歌曲列表，1: 歌词

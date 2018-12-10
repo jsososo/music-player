@@ -69,7 +69,6 @@
             <i :class="`iconfont icon-${orderType}`" />
           </div>
         </div>
-        <!-- 播放列表 -->
       </div>
     </div>
     <audio id="m-player" :src="playNow.url" controls></audio>

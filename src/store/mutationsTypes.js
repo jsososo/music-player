@@ -54,3 +54,6 @@ export const UPDATE_PLAY_NOW = 'UPDATE_PLAY_NOW';
 
 // 切换右侧现实内容
 export const CHANGE_LIST_CONTENT = 'CHANGE_LIST_CONTENT';
+
+// 选择是列表內搜索还是qq音乐搜索
+export const CHANGE_SEARCH_KEY = 'CHANGE_SEARCH_KEY';

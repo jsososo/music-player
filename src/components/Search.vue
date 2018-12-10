@@ -1,6 +1,6 @@
 <template>
   <div class="mb_20">
-    <el-radio-group v-model="sOpt">
+    <el-radio-group :value="searchKey" @change="changeSearchKey">
       <el-radio-button label="列表内"></el-radio-button>
       <!--<el-radio-button label="站内"></el-radio-button>-->
       <el-radio-button label="QQ音乐"></el-radio-button>
@@ -13,34 +13,39 @@
 <script>
   import Avatar from '@/components/Avatar';
   import request from '../assets/utils/request';
+  import { mapGetters } from 'vuex';
   export default {
     name: "Search",
     components: { Avatar },
     data() {
       return {
-        sOpt: '列表内',
         search: '',
       }
     },
     computed: {
-      allSongs() {
-        return this.$store.getters.getAllSongs;
-      }
+      ...mapGetters({
+        allSongs: 'getAllSongs',
+        searchKey: 'getSearchKey',
+      }),
     },
     watch: {
       search(v) {
-        if (this.sOpt !== 'QQ音乐') {
+        if (this.searchKey !== 'QQ音乐') {
           const data = {
             search: v.replace(/\s|,|，|\//g, ''),
-            isAll: this.sOpt === '站内',
+            isAll: this.searchKey === '站内',
           };
           this.$store.dispatch('searchMusic', data);
         } else {
           this.searchQQMusic(v);
         }
       },
-      sOpt(v) {
-        if (v !== 'QQ音乐') {
+    },
+    methods: {
+      changeSearchKey(v) {
+        const val = v === 'QQ音乐' ? '列表内' : 'QQ音乐';
+        this.$store.dispatch('changeSearchKey', val);
+        if (v === 'QQ音乐') {
           const data = {
             search: this.search.replace(/\s|,|，|\//g, ''),
             isAll: v === '站内',
@@ -49,9 +54,7 @@
         } else {
           this.searchQQMusic(this.search);
         }
-      }
-    },
-    methods: {
+      },
       searchQQMusic(v) {
         request.qq({
           apiName: 'QQ_SEARCH',

@@ -47,13 +47,13 @@ const request = {
       const favTag = { title: '我喜欢的', dissid: id };
       myFav.title = '我喜欢的';
       list.unshift(favTag);
-      request.getQQMyFavList(id, uQ, _this);
+      request.getQQMyFavList(id, uQ, _this, true);
       dispatch('setSysTag', list);
       dispatch('updateSelectedTag', id);
     });
   },
   // 获取我喜欢的音乐列表
-  getQQMyFavList(id, uQ, _this) {
+  getQQMyFavList(id, uQ, _this, setPlayNow) {
     const { dispatch } = _this.$store;
     const allSongs = {};
     request.qq({
@@ -67,20 +67,29 @@ const request = {
         loginUin: uQ,
       },
     }, (res) => {
+      let firstSong;
       const list = res.cdlist[0].songlist.map((s) => {
         const sItem = {
           from: 'qq',
           album: s.albumname,
           albummid: s.albummid,
           title: s.songname,
+          albumdesc: s.albumdesc || '',
           songmid: s.alertid && s.songmid,
           artist: s.singer.map(s => s.name).join('/'),
           objectId: s.alertid && s.songmid,
           cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${s.albummid}.jpg`,
         };
         allSongs[s.songmid] = sItem;
+        if (sItem.songmid && !firstSong) {
+          firstSong = sItem
+        }
         return sItem;
       });
+      // 是否需要默认设置听第一首歌
+      if (setPlayNow && firstSong) {
+        dispatch('updatePlayNow', firstSong);
+      }
       dispatch('updateAllSongs', allSongs);
       dispatch('updateShowList', { list, dissid: id });
     });

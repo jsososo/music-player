@@ -7,18 +7,15 @@
 </template>
 
 <script>
+  import { mapGetters } from 'vuex';
   export default {
     name: "Cd",
     computed: {
-      playNow() {
-        return this.$store.getters.getPlaying;
-      },
-      playing() {
-        return this.$store.getters.isPlaying;
-      },
-      loading() {
-        return this.$store.getters.isLoading;
-      }
+      ...mapGetters({
+        playNow: 'getPlaying',
+        playing: 'isPlaying',
+        loading: 'isLoading',
+      }),
     }
   }
 </script>

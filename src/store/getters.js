@@ -42,5 +42,9 @@ export default {
   // 获取右侧内容名
   getListContent(state) {
     return state.listContent;
+  },
+  // 获取是搜索列表哪还是qq音乐
+  getSearchKey(state) {
+    return state.searchKey;
   }
 }

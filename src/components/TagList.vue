@@ -15,6 +15,7 @@
 
 <script>
   import request from '../assets/utils/request';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: "TagList",
@@ -25,18 +26,14 @@
       }
     },
     computed: {
+      ...mapGetters({
+        tagInfo: 'getTagInfo',
+        allSongs: 'getAllSongs',
+        user: 'getUserInfo',
+      }),
       sysTagList() {
         return this.$store.getters.getTagList();
       },
-      tagInfo() {
-        return this.$store.getters.getTagInfo;
-      },
-      allSongs() {
-        return this.$store.getters.getAllSongs;
-      },
-      user() {
-        return this.$store.getters.getUserInfo;
-      }
     },
     methods: {
       // 选中标签，去请求列表內的歌曲
@@ -44,34 +41,7 @@
         const { dispatch } = this.$store;
         dispatch('updateSelectedTag', id);
         dispatch('setListContent', 0);
-        request.axiosReq({
-          apiName: 'QQ_USER_LIST_DETAIL',
-          cb: 'playlistinfoCallback',
-          data: {
-            type: 1,
-            utf8: 1,
-            disstid: id,
-            jsonpCallback: 'playlistinfoCallback',
-            loginUin: this.user.bindQQ,
-          },
-        }, (res) => {
-          const list = res.cdlist[0].songlist.map((s) => {
-            const sItem = {
-              from: 'qq',
-              album: s.albumname,
-              albummid: s.albummid,
-              title: s.songname,
-              songmid: s.songmid,
-              artist: s.singer.map(s => s.name).join('/'),
-              objectId: s.songmid,
-              cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${s.albummid}.jpg`,
-            };
-            this.allSongs[s.songmid] = sItem;
-            return sItem;
-          });
-          dispatch('updateAllSongs', this.allSongs);
-          dispatch('updateShowList', { list, dissid: id });
-        });
+        request.getQQMyFavList(id, this.user.bindQQ, this);
       },
     },
   }

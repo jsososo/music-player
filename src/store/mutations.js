@@ -22,7 +22,7 @@ export default {
     let findList = state.sysSongs[state.tagInfo.selected.dissid] || [];
     const RE = new RegExp(search, 'i');
     state.showList = findList.filter((s) => (
-      s.title.match(RE) || s.artist.match(RE) || s.album.match(RE)
+      s.title.match(RE) || s.artist.match(RE) || s.album.match(RE) || s.albumdesc.match(RE)
     ))
   },
   // 更新选中的的tag
@@ -78,6 +78,9 @@ export default {
       const rI = state.randomHistory.index;
       // 正常的随机播放下一首
       if (rL.length - 1 === rI) {
+        if (state.playingList.length === 1) {
+          document.getElementById('m-player').currentTime = 0;
+        }
         nI = Num(Math.random() * (state.playingList.length - 1));
         rL.push(state.playingList[nI].songmid);
       } else {
@@ -132,13 +135,10 @@ export default {
       rL.length = 0;
       state.tagInfo.playing = state.tagInfo.selected;
     }
-    if (!state.tagInfo.playing) {
-      state.playingList = Object.keys(state.allSongs).filter(id => !state.allSongs[id].from || state.allSongs[id].updateBmob);
-    } else {
-      state.playingList = state.showList.filter(item => item.songmid);
-    }
-    if (!state.playingList.length) {
-      state.playingList = state.showList.filter(item => item.objectId);
+    if (state.searchKey === 'QQ音乐') {
+      state.playingList = (state.showList || []).filter(item => item.songmid);
+    } else if (state.searchKey === '列表内') {
+      state.playingList = (state.sysSongs[state.tagInfo.selected.dissid] || []).filter(item => item.songmid);
     }
     // 如果是向下播放一首新的随机音乐。就记录到randomHistory里
     if (Storage.get('orderType') === 'suiji' && (rL[rL.length - 1] !== data.objectId)) {
@@ -158,14 +158,19 @@ export default {
     state.allSongs = data;
   },
   // 更新展示列表
-  [types.CHANGE_SHOW_LIST](state, data, dissid) {
+  [types.CHANGE_SHOW_LIST](state, data) {
     state.showList = data.map((k) => state.allSongs[k.objectId]);
   },
+  // 歌曲的缓冲
   [types.SET_LOADING](state, data) {
     state.loading = data;
   },
   // 切换右侧的现实内容
   [types.CHANGE_LIST_CONTENT](state, data) {
     state.listContent = data;
+  },
+  // 顶上的qq音乐、列表哪
+  [types.CHANGE_SEARCH_KEY](state, data) {
+    state.searchKey = data;
   }
 }
