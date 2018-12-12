@@ -1,17 +1,7 @@
 import * as types from './mutationsTypes';
 import Num from '../assets/utils/num';
-import Storage from '../assets/utils/Storage';
 
 export default {
-  updateUser: ({ commit }, data) => {
-    Storage.queryBmob('MusicTag', (q) => {
-      q.equalTo('userId', data.objectId);
-      return q;
-    }, (res) => {
-      commit(types.UPDATE_USER_TAG, res);
-    });
-    commit(types.UPDATE_USER, data);
-  },
   updateShowList: ({ commit }, data) => {
     commit(types.UPDATE_SHOW_LIST, data);
   },

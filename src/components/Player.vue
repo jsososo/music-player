@@ -43,8 +43,8 @@
       <!-- 音量、播放顺序、列表等控制 -->
       <div class="other-control inline-block">
         <!-- 音量控制 -->
-        <div :class="`volume-control ${!showVolume && 'hide-slider'}`"  @mouseout="showVolume = false">
-          <div class="volume-slider-container" @mouseout="showVolume = false" @mouseover="showVolume = true">
+        <div class="volume-control"  @mouseout="showVolume = false">
+          <div v-if="showVolume" class="volume-slider-container" @mouseout="showVolume = false" @mouseover="showVolume = true">
             <div class="volume-slider" >
               <el-slider
                 v-model="volume"
@@ -57,8 +57,8 @@
           <i class="iconfont icon-volume" @mouseover="showVolume = true" />
         </div>
         <!-- 播放顺序 -->
-        <div :class="`order-control ${!showOrder && 'hide-order'}`"  @mouseout="showOrder = false">
-          <div class="order-list-container" @mouseout="showOrder = false" @mouseover="showOrder = true">
+        <div class="order-control"  @mouseout="showOrder = false">
+          <div v-if="showOrder" class="order-list-container" @mouseout="showOrder = false" @mouseover="showOrder = true">
             <div class="order-list">
               <div v-for="key in orderList" v-if="orderType !== key" :key="`order-${key}`" @click="changeOrderType(key)">
                 <i :class="`iconfont icon-${key}`" />
@@ -68,6 +68,12 @@
           <div class="now-order-type" @mouseover="showOrder = true" >
             <i :class="`iconfont icon-${orderType}`" />
           </div>
+        </div>
+        <!-- 下载 -->
+        <div class="inline-block ml_5">
+          <a :href="playNow.downUrl" :download="`${playNow.artist}-${playNow.title}${playNow.downAfter}`">
+            <i class="iconfont icon-xiazai" />
+          </a>
         </div>
       </div>
     </div>
@@ -81,6 +87,7 @@
   import { mapGetters } from 'vuex';
   import request from '../assets/utils/request';
   import { handleLyric } from "../assets/utils/stringHelper";
+  import timer from '../assets/utils/timer';
 
   export default {
     name: "PlayerPage",
@@ -94,6 +101,32 @@
         showOrder: false,
         orderList: ['suiji', 'danquxunhuan', 'liebiao'],
         orderType: Storage.get('orderType'),
+        formatMap: {
+          size128: {
+            val: '128k',
+            s: 'M500',
+            e: '.mp3',
+            content: 'audio/mpeg',
+          },
+          size320: {
+            val: '320k',
+            s: 'M800',
+            e: '.mp3',
+            content: 'audio/mpeg',
+          },
+          sizeape: {
+            val: '无损ape',
+            s: 'A000',
+            e: '.ape',
+            content: 'audio/ape',
+          },
+          sizeflac: {
+            val: '无损flac',
+            s: 'F000',
+            e: '.flac',
+            content: 'audio/x-flac',
+          }
+        }
       }
     },
     computed: {
@@ -108,64 +141,42 @@
     },
     watch: {
       playNow(v) {
+        const vkey_expire = Storage.get('vkey_expire');
+        // 获取歌曲的url
+        const musicUrl = this.getSongUrl(v);
+        const downUrl = this.getSongUrl(v, true);
+        // 如果一个半小时了那就更新一下vkey，实际好像是两个小时过期
+        if (timer().str('YYYYMMDDHHmm') > vkey_expire) {
+          request.getQQVkey();
+        } else if (v.url === musicUrl && v.downUrl === downUrl) {
+          // 说明vkey没过期而且链接不变
+          return;
+        }
         this.currentTime = 0;
         const dispatch = this.$store.dispatch;
         document.getElementById('play-music-bg').src = v.cover;
-        if (!v.url && !v.from) {
-          const id = v.objectId;
-          dispatch('setLoading', true);
-          this.getMusicInfo(id, (res) => {
-            if (this.playNow.objectId === res.objectId) {
-              dispatch('updatePlayNow', res);
-              dispatch('setLoading', false);
-            }
-            dispatch('updateSongDetail', { info: res, index: id });
-          });
-        } else if (v.from === 'qq') {
-          if (v.url) {
-            return;
-          }
+        if (v.from === 'qq') {
           // 获取音乐的url
-          const params = {
-            data: {
-              req_0: {
-                module: "vkey.GetVkeyServer", // 管他什么写死就好了
-                method: "CgiGetVkey",  // 管他什么写死就好了
-                param: {
-                  guid: "5339940689", // 管他什么写死就好了
-                  songmid: [v.objectId],  // 歌曲的mid
-                  songtype: [0], // 管他什么写死就好了
-                  uin: "", // 用户的qq号，传不传无所谓
-                  platform: "20",  // 管他什么写死就好了
-                },
-              },
-            },
+          const song = {
+            url: musicUrl,
+            downUrl,
+            expire: vkey_expire,
+            format: v.formatKey,
+            downAfter: v.downAfter,
           };
-          params.data = JSON.stringify(params.data);
-          // 请求获取歌曲的url
+          // 获取歌词
           request.qq({
-            apiName: 'QQ_SONG_INFO',
-            data: params,
-            cb: 'getMusicUrl',
+            apiName: 'QQ_GET_LYRIC',
+            data: {
+              nobase64: 1,
+              songmid: v.objectId,
+            }
           }, (res) => {
-            const resData = res.req_0.data;
-            const song = {
-              url: `${resData.sip[0]}${resData.midurlinfo[0].purl}`,
-            };
-            // 获取歌词
-            request.qq({
-              apiName: 'QQ_GET_LYRIC',
-              data: {
-                nobase64: 1,
-                songmid: v.objectId,
-              }
-            }, (res) => {
-              song.lyric = handleLyric(res.lyric);
-              dispatch('updateSongDetail', { info: song, index: v.objectId });
-              if (this.playNow.objectId === v.objectId) {
-                dispatch('updatePlayNow', this.allSongs[v.objectId]);
-              }
-            });
+            song.lyric = handleLyric(res.lyric);
+            dispatch('updateSongDetail', { info: song, index: v.objectId });
+            if (this.playNow.objectId === v.objectId) {
+              dispatch('updatePlayNow', this.allSongs[v.objectId]);
+            }
           });
         }
       }
@@ -210,17 +221,6 @@
       sDom.onmousedown = () => this.stopUpdateCurrent = true;
     },
     methods: {
-      getMusicInfo(id, cb) {
-        Storage.queryBmob(
-          'MusicSongs',
-          (q) => {
-            q.equalTo('objectId', id);
-            return q;
-          },
-          cb,
-          () => alert('down不下来'),
-        )
-      },
       formatTooltip(v) {
         return `${Num(v / 60, 0, -1)}:${Num(v % 60, 0) < 10 ? `0${Num(v % 60, 0)}` : Num(v % 60, 0)}`;
       },
@@ -244,7 +244,27 @@
       cutSong(type) {
         this.playerDom.pause();
         this.$store.dispatch(type);
-      }
+      },
+      getSongUrl(v, isDown) {
+        let { listen_size, murl, vkey, guid, down_size, down_high } = Storage.get(['listen_size', 'vkey_expire', 'murl', 'vkey', 'guid', 'down_size', 'down_high']);
+        let startSize = listen_size;
+        const formatArr = ['sizeflac', 'size320', 'size128'];
+        const playNow = this.playNow;
+        if (isDown) {
+          formatArr[0] = down_high;
+          startSize = down_size === 'high' ? down_high : down_size;
+        }
+        const startFormat = formatArr.indexOf(startSize);
+        const formatKey = formatArr.slice(startFormat, 4).find(k => v[k]);
+        const { s, e } = this.formatMap[formatKey];
+        if (!isDown) {
+          v.formatKey = formatKey;
+          return `${murl}${s}${v.mediamid}${e}?guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`;
+        } else {
+          v.downAfter = e;
+          return `//music.jsososo.com/qqDown.php?url=${murl}&music=${encodeURI(`${s}${v.mediamid}${e}`)}&name=${encodeURI(`${playNow.artist}-${playNow.title}${e}`)}&guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`
+        }
+      },
     }
   }
 </script>
@@ -264,15 +284,21 @@
 
     .other-control {
       margin-left: 25px;
+      margin-top: 32px;
 
       .iconfont {
         font-size: 20px;
+
+        &.icon-xiazai:before {
+          font-size: 16px;
+          vertical-align: -1px;
+          cursor: pointer;
+        }
       }
 
       .order-control {
         display: inline-block;
         position: relative;
-        top: -45px;
 
         .now-order-type {
           padding: 10px;
@@ -280,7 +306,9 @@
         }
 
         .order-list-container {
-          padding-bottom: 10px;
+          padding-bottom: 40px;
+          position: absolute;
+          top: -76px;
         }
         
         &.hide-order {
@@ -323,13 +351,11 @@
       .volume-control {
         display: inline-block;
         position: relative;
-        vertical-align: top;
-        height: 165px;
-        top: -87px;
 
         .volume-slider-container {
-          position: relative;
-          padding-bottom: 20px;
+          position: absolute;
+          padding-bottom: 40px;
+          top: -125px;
           opacity: 1;
           transition: 0.4s opacity;
         }
@@ -342,20 +368,12 @@
           top: 0;
           height: 90px;
 
-          .volume-slider-container {
-            padding-bottom: 0;
-            opacity: 0;
-          }
           .iconfont {
             margin: 40px 10px;
-          }
-          .volume-slider {
-            display: none;
           }
         }
 
         .volume-slider {
-          position: relative;
           background: rgba(255,255,255,0.4);
           border: #eaeaea 1px solid;
           padding: 15px 0;

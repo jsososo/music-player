@@ -28,9 +28,11 @@
       },
     },
     created() {
-      const { dispatch } = this.$store;
+      // 获取vkey
+      request.getQQVkey();
+      // 播放顺序，qq号的一些配置
       if (!Storage.get('orderType')) {
-        Storage.set('orderType', 'liebiao')
+        Storage.set('orderType', 'liebiao');
       }
       this.defaultActive = window.location.hash.split('/')[1];
       const uQ = Storage.get('uQ');
@@ -39,6 +41,11 @@
       } else {
         this.$message.info('点右上角头像绑定企鹅号');
       }
+      Storage.setDefault({
+        listen_size: 'size320',
+        down_size: 'hight',
+        down_high: 'sizeflac',
+      });
     },
     methods: {
 

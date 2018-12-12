@@ -28,9 +28,9 @@ export function getQueryFromUrl(key, search = window.location.hash) {
   }
 }
 
-export function changeUrlQuery(obj) {
-  const query = getQueryFromUrl();
-  const url = window.location.hash.split('?')[0];
+export function changeUrlQuery(obj, baseUrl = window.location.href) {
+  const query = getQueryFromUrl(baseUrl);
+  const url = baseUrl.split('?')[0];
 
   const newQuery = {...query, ...obj};
   let queryArr = [];

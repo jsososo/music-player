@@ -8,60 +8,90 @@
       :before-close="clickAvatar"
       :center="false"
     >
-      <div style="width: 300px; text-align: center">
-        <div class="inline-block">qq号：</div>
+      <div style="width: 400px; text-align: left">
+        <div class="dialog-label">qq号：</div>
         <el-input style="width: 200px;margin-left: 10px" v-model="username"/>
+      </div>
+      <div style="width: 400px; text-align: left">
+        <div class="dialog-label">优先听：</div>
+        <el-select style="width: 200px;margin-left: 10px" v-model="listenSize">
+          <el-option
+            v-for="item in sizeArr"
+            v-if="!item.type || item.type === 'listen'"
+            :key="item.val"
+            :label="item.label"
+            :value="item.val">
+          </el-option>
+        </el-select>
+      </div>
+      <div style="width: 400px; text-align: left">
+        <div class="dialog-label">下载优先：</div>
+        <el-select style="width: 200px;margin-left: 10px" v-model="downSize">
+          <el-option
+            v-for="item in sizeArr"
+            v-if="!item.type || item.type === 'down'"
+            :key="item.val"
+            :label="item.label"
+            :value="item.val">
+          </el-option>
+        </el-select>
+      </div>
+      <div style="width: 400px; text-align: left" v-if="downSize === 'high'">
+        <div class="dialog-label">无损格式：</div>
+        <el-radio-group v-model="downHigh">
+          <el-radio label="sizeflac">flac</el-radio>
+          <el-radio label="sizeape">ape</el-radio>
+        </el-radio-group>
       </div>
       <div>
         <el-button class="login-btn mt_20" style="width: 200px;" type="primary" @click="login">ok！</el-button>
       </div>
     </el-dialog>
-    <!--<el-dialog-->
-      <!--width="400px"-->
-      <!--:visible.sync="showLoginDialog"-->
-      <!--:before-close="clickAvatar"-->
-      <!--:center="false"-->
-    <!--&gt;-->
-      <!--<div>-->
-        <!--<div class="inline-block w_50">账号：</div>-->
-        <!--<el-input style="width: 200px;margin-left: 10px" v-model="username"/>-->
-      <!--</div>-->
-      <!--<div class="mt_10 mb_10">-->
-        <!--<div class="inline-block w_50">密码：</div>-->
-        <!--<el-input style="width: 200px;margin-left: 10px" type="password" @keyup.enter.native="login" @input="inputPass" />-->
-      <!--</div>-->
-      <!--<div style="padding-left: 60px;">-->
-        <!--<a href="//jsososo.com/#/user/info" class="ml_20 inline-block">-->
-          <!--<el-button class="login-btn">去注册</el-button>-->
-        <!--</a>-->
-        <!--<el-button class="login-btn" type="primary" @click="login">登陆</el-button>-->
-      <!--</div>-->
-    <!--</el-dialog>-->
   </div>
 </template>
 
 <script>
-  import md5 from 'js-md5';
   import Storage from '../assets/utils/Storage';
   import request from '../assets/utils/request';
   export default {
     name: "Avatar",
     data() {
+
       return {
         showLoginDialog: false,
         username: '',
-        md5Pass: '',
+        listenSize: Storage.get('listen_size'),
+        downSize: Storage.get('down_size'),
+        downHigh: Storage.get('down_high'),
+        sizeArr: [
+          { label: '128k', val: 'size128' },
+          { label: '320k', val: 'size320' },
+          // { label: '无损ape', val: 'sizeape' },
+          { label: '无损', val: 'sizeflac', type: 'listen' },
+          { label: '无损', val: 'high', type: 'down' },
+        ],
       }
     },
     computed: {
       user() {
         return this.$store.getters.getUserInfo;
+      },
+    },
+    watch: {
+      listenSize(v) {
+        Storage.set('listen_size', v);
+        this.$message.success('修改成功，下一首生效');
+      },
+      downSize(v) {
+        Storage.set('down_size', v);
+        this.$message.success('修改成功，下一首生效');
+      },
+      downHigh(v) {
+        Storage.set('down_high', v);
+        this.$message.success('修改成功，下一首生效');
       }
     },
     methods: {
-      inputPass(v) {
-        this.md5Pass = md5(v);
-      },
       clickAvatar() {
         this.username = Storage.get('uQ');
         this.showLoginDialog = !this.showLoginDialog;
@@ -72,20 +102,6 @@
           request.getQQList(this);
         }
         this.showLoginDialog = false;
-        // const { dispatch } = this.$store;
-        // const { username, md5Pass } = this;
-        // Storage.logIn(
-        //   { username, password: md5Pass },
-        //   (res) => {
-        //     const user = JSON.parse(JSON.stringify(res));
-        //     dispatch('updateUser', user);
-        //     Storage.set('username', username);
-        //     Storage.set('uid', md5Pass.split('').reverse().join(''));
-        //     user.bindQQ && request.getQQList(this);
-        //     !user.bindQQ && (window.location = '#/me');
-        //     this.showLoginDialog = false;
-        //   }
-        // );
       },
     }
   }
@@ -100,6 +116,12 @@
     margin-left: 30px;
     cursor: pointer;
     vertical-align: middle;
+  }
+  .dialog-label {
+    width: 80px;
+    padding-right: 10px;
+    text-align: right;
+    display: inline-block;
   }
   .user-avatar, .user-avatar-img {
     width: 40px;

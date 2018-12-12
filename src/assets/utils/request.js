@@ -2,6 +2,8 @@ import apiList from './apiList';
 import $ from 'jquery';
 import axios from 'axios';
 import Storage from './Storage';
+import { getQueryFromUrl } from './stringHelper';
+import timer from './timer';
 const request = {
   qq(data, cb = (res) => console.log(res), errCb = (err) => console.error(err))  {
     data.url = apiList[data.apiName || 'TEST'] || '/test.json';
@@ -41,6 +43,9 @@ const request = {
         reqfrom: 1,
       }
     }, (res) => {
+      if (!res.data) {
+        return;
+      }
       const list = res.data.mydiss.list;
       const myFav = res.data.mymusic.find(item => item.title === '喜欢');
       const id = myFav.id;
@@ -76,9 +81,14 @@ const request = {
           title: s.songname,
           albumdesc: s.albumdesc || '',
           songmid: s.alertid && s.songmid,
+          mediamid: s.strMediaMid, // 这才是真正去换媒体文件的
           artist: s.singer.map(s => s.name).join('/'),
           objectId: s.alertid && s.songmid,
           cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${s.albummid}.jpg`,
+          size128: s.size128,
+          size320: s.size320,
+          sizeape: s.sizeape,
+          sizeflac: s.sizeflac,
         };
         allSongs[s.songmid] = sItem;
         if (sItem.songmid && !firstSong) {
@@ -92,6 +102,22 @@ const request = {
       }
       dispatch('updateAllSongs', allSongs);
       dispatch('updateShowList', { list, dissid: id });
+    });
+  },
+  // 获取vkey
+  getQQVkey() {
+    request.qq({
+      apiName: 'QQ_GET_VKEY',
+      cb: 'GET_QQ_VKEY',
+    }, res => {
+      const mUrl = res.req_0.data.midurlinfo[0].purl;
+      const { guid, vkey } = getQueryFromUrl(null, mUrl);
+      Storage.set({
+        guid,
+        vkey,
+        vkey_expire: timer().from(90, 'm').str('YYYYMMDDHHmm'),
+        murl: res.req_0.data.sip[0]
+      });
     });
   },
 };

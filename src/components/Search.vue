@@ -69,7 +69,12 @@
               songmid: item.songmid,
               artist: item.singer.map(s => s.name).join('/'),
               objectId: item.songmid,
+              mediamid: item.media_mid,
               cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${item.albummid}.jpg`,
+              size128: item.size128,
+              size320: item.size320,
+              sizeape: item.sizeape,
+              sizeflac: item.sizeflac,
             };
             this.allSongs[sItem.objectId] = sItem;
             return sItem;
