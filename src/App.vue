@@ -43,7 +43,7 @@
       }
       Storage.setDefault({
         listen_size: 'size320',
-        down_size: 'hight',
+        down_size: 'high',
         down_high: 'sizeflac',
       });
     },
