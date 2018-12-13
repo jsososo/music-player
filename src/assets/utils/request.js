@@ -46,6 +46,7 @@ const request = {
       if (!res.data) {
         return;
       }
+      _this.$message.success('获取歌单成功～');
       const list = res.data.mydiss.list;
       const myFav = res.data.mymusic.find(item => item.title === '喜欢');
       const id = myFav.id;
@@ -55,6 +56,8 @@ const request = {
       request.getQQMyFavList(id, uQ, _this, true);
       dispatch('setSysTag', list);
       dispatch('updateSelectedTag', id);
+    }, () => {
+      _this.$message.error('获取歌单失败！多半是你输qq号的姿势不对！');
     });
   },
   // 获取我喜欢的音乐列表
@@ -80,10 +83,10 @@ const request = {
           albummid: s.albummid,
           title: s.songname,
           albumdesc: s.albumdesc || '',
-          songmid: s.alertid && s.songmid,
+          songmid: s.songmid,
           mediamid: s.strMediaMid, // 这才是真正去换媒体文件的
           artist: s.singer.map(s => s.name).join('/'),
-          objectId: s.alertid && s.songmid,
+          objectId: s.songmid,
           cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${s.albummid}.jpg`,
           size128: s.size128,
           size320: s.size320,

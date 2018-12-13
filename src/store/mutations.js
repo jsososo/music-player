@@ -14,7 +14,7 @@ export default {
     data.dissid && (state.sysSongs[data.dissid] = state.showList);
   },
   [types.UPDATE_ALL_SONGS](state, data) {
-    state.allSongs = data;
+    state.allSongs = { ...state.allSongs, ...data };
   },
   // 搜索歌曲
   [types.SEARCH_MUSIC](state, data) {
@@ -136,9 +136,9 @@ export default {
       state.tagInfo.playing = state.tagInfo.selected;
     }
     if (state.searchKey === 'QQ音乐') {
-      state.playingList = (state.showList || []).filter(item => item.songmid);
+      state.playingList = (state.showList || []).filter(item => item.mediamid);
     } else if (state.searchKey === '列表内') {
-      state.playingList = (state.sysSongs[state.tagInfo.selected.dissid] || []).filter(item => item.songmid);
+      state.playingList = (state.sysSongs[state.tagInfo.selected.dissid] || []).filter(item => item.mediamid);
     }
     // 如果是向下播放一首新的随机音乐。就记录到randomHistory里
     if (Storage.get('orderType') === 'suiji' && (rL[rL.length - 1] !== data.objectId)) {
