@@ -262,7 +262,7 @@
           return `${murl}${s}${v.mediamid}${e}?guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`;
         } else {
           v.downAfter = e;
-          return `//music.jsososo.com/qqDown.php?url=${murl}&music=${encodeURI(`${s}${v.mediamid}${e}`)}&name=${encodeURI(`${playNow.artist}-${playNow.title}${e}`)}&guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`
+          return `//music.jsososo.com/api/qqDown.php?url=${murl}&music=${encodeURI(`${s}${v.mediamid}${e}`)}&name=${encodeURI(`${playNow.artist}-${playNow.title}${e}`)}&guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`
         }
       },
     }
