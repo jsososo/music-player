@@ -84,7 +84,7 @@ const request = {
           title: s.songname,
           albumdesc: s.albumdesc || '',
           songmid: s.songmid,
-          mediamid: s.strMediaMid, // 这才是真正去换媒体文件的
+          mediamid: s.size128 ? s.strMediaMid : '', // 这才是真正去换媒体文件的 如果连128的格式都没有的话就当作没这首歌了
           artist: s.singer.map(s => s.name).join('/'),
           objectId: s.songmid,
           cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${s.albummid}.jpg`,

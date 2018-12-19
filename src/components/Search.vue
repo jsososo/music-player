@@ -69,7 +69,7 @@
               songmid: item.songmid,
               artist: item.singer.map(s => s.name).join('/'),
               objectId: item.songmid,
-              mediamid: item.media_mid,
+              mediamid: item.size128 && item.media_mid, // 避免有的歌曲有id没有音乐
               cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${item.albummid}.jpg`,
               size128: item.size128,
               size320: item.size320,
