@@ -145,6 +145,8 @@
         // 获取歌曲的url
         const musicUrl = this.getSongUrl(v);
         const downUrl = this.getSongUrl(v, true);
+        // 更新后面的背景
+        document.getElementById('play-music-bg').src = v.cover;
         // 如果一个半小时了那就更新一下vkey，实际好像是两个小时过期
         if (timer().str('YYYYMMDDHHmm') > vkey_expire) {
           request.getQQVkey();
@@ -154,7 +156,6 @@
         }
         this.currentTime = 0;
         const dispatch = this.$store.dispatch;
-        document.getElementById('play-music-bg').src = v.cover;
         if (v.from === 'qq') {
           // 获取音乐的url
           const song = {

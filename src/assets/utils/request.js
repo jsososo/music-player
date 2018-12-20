@@ -119,7 +119,7 @@ const request = {
         guid,
         vkey,
         vkey_expire: timer().from(90, 'm').str('YYYYMMDDHHmm'),
-        murl: res.req_0.data.sip[0]
+        murl: res.req_0.data.sip[0],
       });
     });
   },
