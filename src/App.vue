@@ -60,6 +60,7 @@
   }
   #app {
     height: 100vh;
+    min-width: 1200px;
 
     #play-music-bg {
       position: absolute;
@@ -86,6 +87,7 @@
     .main-container {
       position: absolute;
       overflow-y: auto;
+      min-width: 1200px;
       height: calc(100vh - 80px);
       top: 0;
       left: 0;

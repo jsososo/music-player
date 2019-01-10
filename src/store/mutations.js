@@ -3,6 +3,9 @@ import Storage from "../assets/utils/Storage";
 import Num from "../assets/utils/num";
 
 export default {
+  [types.SET_FAV_LIST](state, data) {
+    state.favList = data;
+  },
   [types.UPDATE_USER_TAG](state, data) {
     console.log(data);
   },
@@ -14,7 +17,7 @@ export default {
     data.dissid && (state.sysSongs[data.dissid] = state.showList);
   },
   [types.UPDATE_ALL_SONGS](state, data) {
-    state.allSongs = { ...state.allSongs, ...data };
+    state.allSongs = { ...data, ...state.allSongs };
   },
   // 搜索歌曲
   [types.SEARCH_MUSIC](state, data) {

@@ -41,7 +41,7 @@
         const { dispatch } = this.$store;
         dispatch('updateSelectedTag', id);
         dispatch('setListContent', 0);
-        request.getQQMyFavList(id, this.user.bindQQ, this);
+        request.getQQMyFavList(id, this.user.bindQQ, this, { upShow: true });
       },
     },
   }

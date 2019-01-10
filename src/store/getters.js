@@ -1,4 +1,8 @@
 export default {
+  // 获取我喜欢的列表
+  getFavList: (state) => {
+    return state.favList;
+  },
   // 获取用户信息
   getUserInfo: (state) => {
     return state.user;

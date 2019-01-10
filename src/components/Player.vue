@@ -141,6 +141,7 @@
     },
     watch: {
       playNow(v) {
+        document.title = v.title;
         const vkey_expire = Storage.get('vkey_expire');
         // 获取歌曲的url
         const musicUrl = this.getSongUrl(v);

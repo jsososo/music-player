@@ -1,3 +1,6 @@
+// 我喜欢的歌曲
+export const SET_FAV_LIST = 'SET_FAV_LIST';
+
 // 更新用户的tag
 export const UPDATE_USER_TAG = 'UPDATE_USER_TAG';
 

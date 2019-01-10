@@ -7,10 +7,13 @@ import timer from './timer';
 const request = {
   qq(data, cb = (res) => console.log(res), errCb = (err) => console.error(err))  {
     data.url = apiList[data.apiName || 'TEST'] || '/test.json';
-    data.dataType = 'jsonp';
+    data.dataType = data.dataType || 'jsonp';
     data.data = data.data || {};
     data.data.jsonpCallback = data.cb || 'MusicJsonCallback';
     data.data.callback = data.cb || 'MusicJsonCallback';
+    data.xhrFields = {
+      withCredentials: true
+    };
 
     try {
       window[data.cb || 'MusicJsonCallback'] = (data) => cb(data);
@@ -53,17 +56,19 @@ const request = {
       const favTag = { title: '我喜欢的', dissid: id };
       myFav.title = '我喜欢的';
       list.unshift(favTag);
-      request.getQQMyFavList(id, uQ, _this, true);
+      Storage.set('q_fav_id', id);
+      request.getQQMyFavList(id, uQ, _this, { setPlayNow: true, isFav: true, upShow: true });
       dispatch('setSysTag', list);
       dispatch('updateSelectedTag', id);
     }, () => {
       _this.$message.error('获取歌单失败！多半是你输qq号的姿势不对！');
     });
   },
-  // 获取我喜欢的音乐列表
-  getQQMyFavList(id, uQ, _this, setPlayNow) {
+  // 获取我的歌单歌曲列表
+  getQQMyFavList(id, uQ, _this, { setPlayNow, isFav, upShow }, cb) {
     const { dispatch } = _this.$store;
     const allSongs = {};
+    isFav = isFav || (id == Storage.get('q_fav_id'));
     request.qq({
       apiName: 'QQ_USER_LIST_DETAIL',
       cb: 'playlistinfoCallback',
@@ -76,6 +81,7 @@ const request = {
       },
     }, (res) => {
       let firstSong;
+      const favList = {};
       const list = res.cdlist[0].songlist.map((s) => {
         const sItem = {
           from: 'qq',
@@ -92,10 +98,14 @@ const request = {
           size320: s.size320,
           sizeape: s.sizeape,
           sizeflac: s.sizeflac,
+          songid: s.songid,
         };
         allSongs[s.songmid] = sItem;
         if (sItem.songmid && !firstSong) {
           firstSong = sItem
+        }
+        if (isFav && s.songmid) {
+          favList[s.songmid] = sItem;
         }
         return sItem;
       });
@@ -104,7 +114,15 @@ const request = {
         dispatch('updatePlayNow', firstSong);
       }
       dispatch('updateAllSongs', allSongs);
-      dispatch('updateShowList', { list, dissid: id });
+      if (upShow) {
+        dispatch('updateShowList', { list, dissid: id });
+      }
+      if (isFav) {
+        favList.id = res.cdlist[0].dirid;
+        favList.disstid = id;
+        dispatch('setFavList', favList);
+      }
+      cb && cb(list);
     });
   },
   // 获取vkey
@@ -119,7 +137,8 @@ const request = {
         guid,
         vkey,
         vkey_expire: timer().from(90, 'm').str('YYYYMMDDHHmm'),
-        murl: res.req_0.data.sip[0],
+        // 第一个url在获取320或无损的时候有时会出现403，所以优先采用第二个
+        murl: res.req_0.data.sip[1] || res.req_0.data.sip[0],
       });
     });
   },

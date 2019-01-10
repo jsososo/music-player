@@ -31,4 +31,5 @@ export default {
   downloading: false,
   user: {},
   listContent: 0, // 右侧现实内容 0: 歌曲列表，1: 歌词
+  favList: {}, // 我喜欢的歌曲
 };

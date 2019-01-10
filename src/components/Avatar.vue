@@ -25,7 +25,7 @@
         </el-select>
       </div>
       <div style="width: 400px; text-align: left">
-        <div class="dialog-label">下载优先：</div>
+        <div class="dialog-label">优先下：</div>
         <el-select style="width: 200px;margin-left: 10px" v-model="downSize">
           <el-option
             v-for="item in sizeArr"

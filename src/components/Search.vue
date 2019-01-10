@@ -75,6 +75,7 @@
               size320: item.size320,
               sizeape: item.sizeape,
               sizeflac: item.sizeflac,
+              songid: item.songid,
             };
             this.allSongs[sItem.objectId] = sItem;
             return sItem;

@@ -59,4 +59,7 @@ export default {
   changeSearchKey: ({ commit }, data) => {
     commit(types.CHANGE_SEARCH_KEY, data);
   },
+  setFavList: ({ commit }, data) => {
+    commit(types.SET_FAV_LIST, data);
+  }
 }
