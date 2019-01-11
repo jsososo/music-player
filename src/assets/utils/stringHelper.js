@@ -1,3 +1,4 @@
+import Storage from './Storage';
 /*
 * 从浏览器url的search里获取query值
 *
@@ -65,6 +66,53 @@ export function handleLyric(str) {
     }
   })
   return result;
+}
+
+const formatMap = {
+  size128: {
+    val: '128k',
+      s: 'M500',
+      e: '.mp3',
+      content: 'audio/mpeg',
+  },
+  size320: {
+    val: '320k',
+      s: 'M800',
+      e: '.mp3',
+      content: 'audio/mpeg',
+  },
+  sizeape: {
+    val: '无损ape',
+      s: 'A000',
+      e: '.ape',
+      content: 'audio/ape',
+  },
+  sizeflac: {
+    val: '无损flac',
+      s: 'F000',
+      e: '.flac',
+      content: 'audio/x-flac',
+  }
+}
+
+export function getSongUrl(v, isDown) {
+  let {listen_size, murl, vkey, guid, down_size, down_high} = Storage.get(['listen_size', 'vkey_expire', 'murl', 'vkey', 'guid', 'down_size', 'down_high']);
+  let startSize = listen_size;
+  const formatArr = ['sizeflac', 'size320', 'size128'];
+  if (isDown) {
+    formatArr[0] = down_high;
+    startSize = down_size === 'high' ? down_high : down_size;
+  }
+  const startFormat = formatArr.indexOf(startSize);
+  const formatKey = formatArr.slice(startFormat, 4).find(k => v[k]);
+  const {s, e} = formatMap[formatKey];
+  if (!isDown) {
+    v.formatKey = formatKey;
+    return `${murl}${s}${v.mediamid}${e}?guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`;
+  } else {
+    v.downAfter = e;
+    return `//music.jsososo.com/api/qqDown.php?url=${murl}&music=${encodeURI(`${s}${v.mediamid}${e}`)}&name=${encodeURI(`${v.artist}-${v.title}${e}`)}&guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`
+  }
 }
 
 export function u8ToBase64( bytes ) {

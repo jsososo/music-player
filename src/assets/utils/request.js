@@ -53,7 +53,8 @@ const request = {
       const list = res.data.mydiss.list;
       const myFav = res.data.mymusic.find(item => item.title === '喜欢');
       const id = myFav.id;
-      const favTag = { title: '我喜欢的', dissid: id };
+      // 201是默认值
+      const favTag = { title: '我喜欢的', dissid: id, dirid: 201 };
       myFav.title = '我喜欢的';
       list.unshift(favTag);
       Storage.set('q_fav_id', id);
@@ -69,6 +70,7 @@ const request = {
     const { dispatch } = _this.$store;
     const allSongs = {};
     isFav = isFav || (id == Storage.get('q_fav_id'));
+
     request.qq({
       apiName: 'QQ_USER_LIST_DETAIL',
       cb: 'playlistinfoCallback',

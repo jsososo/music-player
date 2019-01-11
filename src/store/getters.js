@@ -3,9 +3,9 @@ export default {
   getFavList: (state) => {
     return state.favList;
   },
-  // 获取用户信息
-  getUserInfo: (state) => {
-    return state.user;
+  // 添加到歌单的一些信息
+  add2DirInfo: (state) => {
+    return state.add2Dir;
   },
   // 获取系统的tag列表
   getTagList: (state) => (isSys = true) => {

@@ -1,7 +1,6 @@
 <template>
   <div class="user-avatar">
-    <img class="user-avatar-img" v-if="user.avatar" :src="user.avatar" @click="clickAvatar">
-    <i v-if="!user.avatar" class="iconfont icon-yonghu" style="font-size: 25px;" @click="clickAvatar" />
+    <i class="iconfont icon-yonghu" style="font-size: 25px;" @click="clickAvatar" />
     <el-dialog
       width="400px"
       :visible.sync="showLoginDialog"
@@ -71,11 +70,6 @@
           { label: '无损', val: 'high', type: 'down' },
         ],
       }
-    },
-    computed: {
-      user() {
-        return this.$store.getters.getUserInfo;
-      },
     },
     watch: {
       listenSize(v) {

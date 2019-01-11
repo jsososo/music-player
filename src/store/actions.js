@@ -23,9 +23,6 @@ export default {
   updateSongDetail: ({ commit }, data) => {
     commit(types.UPDATE_SONG_DETAIL, data);
   },
-  setLoading: ({ commit }, data) => {
-    commit(types.SET_LOADING, data);
-  },
   playPrev: ({ commit }) => {
     commit(types.PLAY_PREV);
   },
@@ -37,14 +34,6 @@ export default {
   },
   setSysTag: ({ commit }, data) => {
     commit(types.SET_SYS_TAG, data);
-  },
-  setAllSongs: ({ commit }, data) => {
-    const allSongs = {};
-    data.forEach((item) => allSongs[item.objectId] = item);
-
-    commit(types.SET_ALL_SONGS, allSongs);
-    commit(types.CHANGE_SHOW_LIST, Object.values(allSongs));
-    commit(types.UPDATE_PLAY_NOW, data[Num(Math.random() * (data.length - 1))]);
   },
   updateAllSongs: ({ commit }, data) => {
     commit(types.UPDATE_ALL_SONGS, data);
@@ -61,5 +50,8 @@ export default {
   },
   setFavList: ({ commit }, data) => {
     commit(types.SET_FAV_LIST, data);
+  },
+  updateAdd2DirInfo: ({ commit }, data) => {
+    commit(types.UPDATE_ADD_DIR_INFO, data);
   }
 }

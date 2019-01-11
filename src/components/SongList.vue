@@ -11,7 +11,11 @@
         <span class="song-operation">
           <span
             @click="like(s.songmid, s.songid)"
-            :class="favList[s.songmid] ? 'iconfont icon-xihuan iconfont' : 'iconfont icon-weixihuan'"></span>
+            :class="favList[s.songmid] ? 'iconfont icon-xihuan iconfont' : 'iconfont icon-weixihuan'">
+          </span>
+          <a :href="downUrl(s)" v-if="s.mediamid">
+            <span class="iconfont icon-xiazai" style="font-size: 16px" />
+          </a>
           <!--<span class="iconfont icon-tianjia"></span>-->
         </span>
       </span>
@@ -53,7 +57,7 @@
 <script>
   import { mapGetters } from 'vuex';
   import Storage from '../assets/utils/Storage';
-  import { getQueryFromUrl } from "../assets/utils/stringHelper";
+  import { getQueryFromUrl, getSongUrl } from "../assets/utils/stringHelper";
   import request from '../assets/utils/request';
 
   export default {
@@ -75,6 +79,8 @@
         showList: 'getShowList',
         allSongs: 'getAllSongs',
         favList: 'getFavList',
+        add2DirInfo: 'add2DirInfo',
+        tagInfo: 'getTagInfo',
       }),
     },
     watch: {
@@ -95,6 +101,21 @@
           Storage.set('qy_token', f(`${token}`));
           this.$message.success('ok！');
         }
+      },
+      // 别的组件想要增删歌单
+      add2DirInfo(data) {
+        const { song, add, dir } = data;
+        if (!song.songmid) {
+          return;
+        }
+        let params = {}, u = 0;
+        if (add) {
+          params = { midlist: song.songmid, dirid: dir.dirid, typelist: 13 };
+        } else {
+          params = { uin: Storage.get('uQ'), dirid: dir.dirid, ids: song.songid, types: 3 };
+          u = 1;
+        }
+        this.addToDir(params, u, dir.dissid, song.songmid);
       }
     },
     methods: {
@@ -122,7 +143,10 @@
         const uQ = Storage.get('uQ');
         // 一些校验，如果没登录、上次的添加还没结束等就停一下
         if (window.is2Dir) {
-          this.$message.info('别急，等一下哈，等不及就刷新一下');
+          this.$notify({
+            title: '操作失败',
+            message: '别急，等一下上次的操作结果，等不及就刷新一下',
+          });
           return;
         }
         if (!uQ) {
@@ -151,7 +175,12 @@
         iframe.src = `${url[u]}?${dataArr.join('&')}`
       },
       checkResult(disstid, uQ, u, id) {
-        request.getQQMyFavList(disstid, uQ, this, { isFav: disstid === this.favList.disstid }, (songs) => {
+        request.getQQMyFavList(disstid, uQ, this,
+          {
+            isFav: disstid === this.favList.disstid,
+            upShow: this.tagInfo.selected.dissid === disstid
+          },
+          (songs) => {
           window.is2Dir = false;
           const item = songs.find(s => s.songmid === id);
           if (item && !u) {
@@ -178,6 +207,10 @@
         } else {
           pDom.currentTime = 0;
         }
+      },
+      // 获取下载链接
+      downUrl(v) {
+        return getSongUrl(v, true);
       },
     }
   }

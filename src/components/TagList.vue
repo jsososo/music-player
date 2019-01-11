@@ -16,6 +16,7 @@
 <script>
   import request from '../assets/utils/request';
   import { mapGetters } from 'vuex';
+  import Storage from "../assets/utils/Storage";
 
   export default {
     name: "TagList",
@@ -29,7 +30,6 @@
       ...mapGetters({
         tagInfo: 'getTagInfo',
         allSongs: 'getAllSongs',
-        user: 'getUserInfo',
       }),
       sysTagList() {
         return this.$store.getters.getTagList();
@@ -41,7 +41,7 @@
         const { dispatch } = this.$store;
         dispatch('updateSelectedTag', id);
         dispatch('setListContent', 0);
-        request.getQQMyFavList(id, this.user.bindQQ, this, { upShow: true });
+        request.getQQMyFavList(id, Storage.get('uQ'), this, { upShow: true });
       },
     },
   }

@@ -22,11 +22,6 @@
         defaultActive: '/',
       }
     },
-    computed: {
-      user() {
-        return this.$store.getters.getUserInfo;
-      },
-    },
     created() {
       // 获取vkey
       request.getQQVkey();

@@ -3,14 +3,11 @@ import Storage from "../assets/utils/Storage";
 import Num from "../assets/utils/num";
 
 export default {
+  [types.UPDATE_ADD_DIR_INFO](state, data) {
+    state.add2Dir = data;
+  },
   [types.SET_FAV_LIST](state, data) {
     state.favList = data;
-  },
-  [types.UPDATE_USER_TAG](state, data) {
-    console.log(data);
-  },
-  [types.UPDATE_USER](state, data) {
-    state.user = { ...(state.user), ...data };
   },
   [types.UPDATE_SHOW_LIST](state, data) {
     state.showList = data.list;
@@ -31,11 +28,6 @@ export default {
   // 更新选中的的tag
   [types.UPDATE_SELECTED_TAG](state, id) {
     state.tagInfo.selected = state.sysTags.find((t) => t.dissid === id);
-    // if (tag) {
-    //   state.showList = state.sysSongs[tag].map((k) => state.allSongs[k]);
-    // } else {
-    //   state.showList = Object.values(state.allSongs);
-    // }
   },
   // 上一首
   [types.PLAY_PREV](state) {
@@ -163,10 +155,6 @@ export default {
   // 更新展示列表
   [types.CHANGE_SHOW_LIST](state, data) {
     state.showList = data.map((k) => state.allSongs[k.objectId]);
-  },
-  // 歌曲的缓冲
-  [types.SET_LOADING](state, data) {
-    state.loading = data;
   },
   // 切换右侧的现实内容
   [types.CHANGE_LIST_CONTENT](state, data) {

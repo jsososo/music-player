@@ -1,12 +1,6 @@
 // 我喜欢的歌曲
 export const SET_FAV_LIST = 'SET_FAV_LIST';
 
-// 更新用户的tag
-export const UPDATE_USER_TAG = 'UPDATE_USER_TAG';
-
-// 更新用户
-export const UPDATE_USER = 'UPDATE_USER';
-
 // 更显展示列表
 export const UPDATE_SHOW_LIST = 'UPDATE_SHOW_LIST';
 
@@ -30,9 +24,6 @@ export const SET_DOWNLOADING = 'SET_DOWNLOADING';
 
 // 更新歌曲详细信息
 export const UPDATE_SONG_DETAIL = 'UPDATE_SONG_DETAIL';
-
-// 设置加载状态
-export const SET_LOADING = 'SET_LOADING';
 
 // 播放下一首
 export const PLAY_NEXT = 'PLAY_NEXT';
@@ -60,3 +51,6 @@ export const CHANGE_LIST_CONTENT = 'CHANGE_LIST_CONTENT';
 
 // 选择是列表內搜索还是qq音乐搜索
 export const CHANGE_SEARCH_KEY = 'CHANGE_SEARCH_KEY';
+
+// 更新增删歌曲的信息
+export const UPDATE_ADD_DIR_INFO = 'UPDATE_ADD_DIR_INFO';
