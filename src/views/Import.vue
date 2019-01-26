@@ -193,7 +193,7 @@
         download(v, this);
       },
       downAll() {
-        !this.selectedNum &&
+        this.selectedNum &&
         Object.keys(this.selectedVal).forEach(i => this.selectedVal[i] && download(this.songList[i].qqInfo, this));
       },
       add2Dir(song, dir, add) {
