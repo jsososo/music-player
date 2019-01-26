@@ -1,4 +1,5 @@
 import Storage from './Storage';
+import down from './download';
 /*
 * 从浏览器url的search里获取query值
 *
@@ -105,14 +106,27 @@ export function getSongUrl(v, isDown) {
   }
   const startFormat = formatArr.indexOf(startSize);
   const formatKey = formatArr.slice(startFormat, 4).find(k => v[k]);
-  const {s, e} = formatMap[formatKey];
+  const {s, e, content} = formatMap[formatKey];
   if (!isDown) {
     v.formatKey = formatKey;
     return `${murl}${s}${v.mediamid}${e}?guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`;
   } else {
     v.downAfter = e;
-    return `//music.jsososo.com/api/qqDown.php?url=${murl}&music=${encodeURI(`${s}${v.mediamid}${e}`)}&name=${encodeURI(`${v.artist}-${v.title}${e}`)}&guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`
+    v.content = content;
+    return [`${murl}${s}${v.mediamid}${e}?guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`, `${v.artist}-${v.title}${v.downAfter}`];
   }
+}
+
+const downLoading = {};
+
+export function download(v, that) {
+  const [url, name] = getSongUrl(v, true);
+  if (downLoading[url]) {
+    that.$message.warning('这首歌已经在下载了，别急');
+    return;
+  }
+  downLoading[url] = true;
+  down(url, name, null, () => downLoading[url] = false);
 }
 
 export function u8ToBase64( bytes ) {

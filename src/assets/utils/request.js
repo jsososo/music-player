@@ -1,6 +1,5 @@
 import apiList from './apiList';
 import $ from 'jquery';
-import axios from 'axios';
 import Storage from './Storage';
 import { getQueryFromUrl } from './stringHelper';
 import timer from './timer';
@@ -11,6 +10,10 @@ const request = {
     data.data = data.data || {};
     data.data.jsonpCallback = data.cb || 'MusicJsonCallback';
     data.data.callback = data.cb || 'MusicJsonCallback';
+    if (data.dataType !== 'jsonp') {
+      data.success = cb;
+      data.error = errCb;
+    }
     data.xhrFields = {
       withCredentials: true
     };
@@ -21,18 +24,6 @@ const request = {
     } catch (err) {
       errCb(err);
     }
-  },
-  axiosReq(data, cb = (res) => console.log(res), errCb = (err) => console.error(err)) {
-    axios.get(apiList[data.apiName || 'TEST'], {
-      params: data.data,
-    }).then((res) => {
-      if (data.cb) {
-        window[data.cb] = (r) => cb(r);
-        eval(res.data);
-      } else {
-        cb(res.data);
-      }
-    }).catch(errCb);
   },
   // 获取qq音乐列表
   getQQList(_this) {

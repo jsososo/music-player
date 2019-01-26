@@ -76,9 +76,9 @@
         </div>
         <!-- 下载 -->
         <div class="inline-block ml_5">
-          <a :href="playNow.downUrl" :download="`${playNow.artist}-${playNow.title}${playNow.downAfter}`">
+          <span @click="down(playNow)">
             <i class="iconfont icon-xiazai" />
-          </a>
+          </span>
         </div>
       </div>
     </div>
@@ -91,7 +91,7 @@
   import Storage from '../assets/utils/Storage';
   import { mapGetters } from 'vuex';
   import request from '../assets/utils/request';
-  import { handleLyric, getSongUrl } from "../assets/utils/stringHelper";
+  import { handleLyric, getSongUrl, download } from "../assets/utils/stringHelper";
   import timer from '../assets/utils/timer';
 
   export default {
@@ -125,13 +125,12 @@
         const vkey_expire = Storage.get('vkey_expire');
         // 获取歌曲的url
         const musicUrl = getSongUrl(v);
-        const downUrl = getSongUrl(v, true);
         // 更新后面的背景
         document.getElementById('play-music-bg').src = v.cover;
         // 如果一个半小时了那就更新一下vkey，实际好像是两个小时过期
         if (timer().str('YYYYMMDDHHmm') > vkey_expire) {
           request.getQQVkey();
-        } else if (v.url === musicUrl && v.downUrl === downUrl) {
+        } else if (v.url === musicUrl) {
           // 说明vkey没过期而且链接不变
           return;
         }
@@ -141,7 +140,6 @@
           // 获取音乐的url
           const song = {
             url: musicUrl,
-            downUrl,
             expire: vkey_expire,
             format: v.formatKey,
             downAfter: v.downAfter,
@@ -231,6 +229,9 @@
       add2Dir(dir, add) {
         this.$store.dispatch('updateAdd2DirInfo', { song: this.playNow, dir, add })
       },
+      down(v) {
+        download(v, this)
+      }
     }
   }
 </script>

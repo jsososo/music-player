@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Player from './views/PlayerPage'
+import ImportPage from './views/Import';
+import Version from './views/Version';
 
 Vue.use(Router);
 
@@ -14,6 +16,22 @@ const router = new Router({
         title: '音乐哟'
       }
     },
+    {
+      path: '/import',
+      name: 'import',
+      component: ImportPage,
+      meta: {
+        title: '导入',
+      }
+    },
+    {
+      path: '/version',
+      name: 'version',
+      component: Version,
+      meta: {
+        title: '更新记录',
+      }
+    }
   ]
 });
 

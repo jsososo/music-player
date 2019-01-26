@@ -5,6 +5,7 @@
     <div class="main-container">
       <router-view/>
       <Player />
+      <AddToDir />
     </div>
   </div>
 </template>
@@ -12,11 +13,12 @@
 <script>
   import Storage from './assets/utils/Storage';
   import Player from './components/Player';
+  import AddToDir from './components/AddToDir';
   import request from './assets/utils/request';
 
   export default {
     name: 'App',
-    components: { Player },
+    components: { Player, AddToDir },
     data() {
       return {
         defaultActive: '/',

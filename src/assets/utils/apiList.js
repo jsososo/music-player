@@ -1,4 +1,5 @@
 const apiList = {
+  '163': '//music.jsososo.com/neapi/index.php',
   'QQ_SEARCH': '//c.y.qq.com/soso/fcgi-bin/client_search_cp',
   'QQ_SONG_INFO': '//u.y.qq.com/cgi-bin/musicu.fcg',
   'QQ_LIST': '//c.y.qq.com/rsc/fcgi-bin/fcg_get_profile_homepage.fcg',
