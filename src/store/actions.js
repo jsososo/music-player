@@ -2,6 +2,9 @@ import * as types from './mutationsTypes';
 import Num from '../assets/utils/num';
 
 export default {
+  updateSelectedSongs: ({ commit }, data) => {
+    commit(types.SELECT_SONGS, data);
+  },
   updateShowList: ({ commit }, data) => {
     commit(types.UPDATE_SHOW_LIST, data);
   },

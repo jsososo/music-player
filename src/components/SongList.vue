@@ -1,10 +1,13 @@
 <template>
-  <div class="song-list">
+  <div :class="`song-list ${selected.len ? 'selecting' : ''}`">
     <div :class="s.mediamid ? (playNow.objectId === s.objectId ? 'song-item playing' : 'song-item') : 'song-item song-empty'"
          v-for="(s, i) in showList"
          :key="`${s.objectId}-${i}`"
     >
       <span class="song-order" @click="playMusic(s.objectId, s.mediamid)">{{i + 1}}</span>
+      <span class="song-checkbox" @click="select(s.objectId)">
+        <el-checkbox :value="selected.val[s.objectId]"></el-checkbox>
+      </span>
       <span class="song-title" @click="playMusic(s.objectId, s.mediamid)">{{s.title}}</span>
       <span class="song-artist">
         <span class="song-artist-txt" @click="playMusic(s.objectId, s.mediamid)">{{s.artist}}</span>
@@ -42,6 +45,7 @@
         allSongs: 'getAllSongs',
         favList: 'getFavList',
         tagInfo: 'getTagInfo',
+        selected: 'getSelectedSongs',
       }),
     },
     methods: {
@@ -66,6 +70,13 @@
       down(v) {
         download(v, this);
       },
+      select(v) {
+        window.event.preventDefault();
+        const { selected } = this;
+        selected.val[v] = !selected.val[v];
+        selected.len += selected.val[v] ? 1 : -1;
+        this.$store.dispatch('updateSelectedSongs', selected);
+      }
     }
   }
 </script>
@@ -79,6 +90,15 @@
     width: 550px;
     margin-top: 10px;
     margin-right: 20px;
+
+    &.selecting {
+      .song-order {
+        display: none !important;
+      }
+      .song-checkbox {
+        display: inline-block !important;
+      }
+    }
 
     &::-webkit-scrollbar
     {
@@ -123,6 +143,13 @@
 
     &.song-empty {
       opacity: 0.55;
+
+      .song-order {
+        display: inline-block !important;
+      }
+      .song-checkbox {
+        display: none !important;
+      }
       &:hover {
         .song-artist-txt {
           opacity: 1 !important;
@@ -133,8 +160,29 @@
       }
     }
 
+    .song-checkbox {
+      display: none;
+      width: 10%;
+      padding: 10px;
+      box-sizing: border-box;
+
+      .el-checkbox__inner {
+        background: transparent !important;
+        border: 1px solid rgba(255,255,255,0.6) !important;
+        transform: scale(1.25);
+      }
+    }
+
     &:hover {
       background: rgba(255,255,255,0.2);
+
+      .song-order {
+        display: none;
+      }
+
+      .song-checkbox {
+        display: inline-block;
+      }
 
       .song-artist {
         .song-artist-txt {
@@ -146,8 +194,7 @@
         }
       }
     }
-
-    span {
+    .song-order, .song-artist, .song-title {
       display: inline-block;
       padding: 10px;
       box-sizing: border-box;

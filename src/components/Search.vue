@@ -1,11 +1,18 @@
 <template>
-  <div class="mb_20">
-    <el-radio-group :value="searchKey" @change="changeSearchKey">
-      <el-radio-button label="列表内"></el-radio-button>
-      <!--<el-radio-button label="站内"></el-radio-button>-->
-      <el-radio-button label="QQ音乐"></el-radio-button>
-    </el-radio-group>
-    <input type="text" class="search-input" placeholder="找点什么吧" v-model="search">
+  <div class="mb_20 list-top-container">
+    <div v-if="!selected.len" class="inline-block top-box">
+      <el-radio-group :value="searchKey" @change="changeSearchKey">
+        <el-radio-button label="列表内"></el-radio-button>
+        <!--<el-radio-button label="站内"></el-radio-button>-->
+        <el-radio-button label="QQ音乐"></el-radio-button>
+      </el-radio-group>
+      <input type="text" class="search-input" placeholder="找点什么吧" v-model="search">
+    </div>
+    <div v-if="selected.len" class="inline-block top-box">
+      <div class="top-box-button" @click="selectAll">全 选</div>
+      <span class="pr_20">已选择：{{selected.len}}/{{allLength}}</span>
+      <div class="top-box-button" @click="downAll">批量下载</div>
+    </div>
     <Avatar />
   </div>
 </template>
@@ -14,21 +21,34 @@
   import Avatar from '@/components/Avatar';
   import request from '../assets/utils/request';
   import { mapGetters } from 'vuex';
+  import { download } from "../assets/utils/stringHelper";
+
   export default {
     name: "Search",
     components: { Avatar },
     data() {
       return {
         search: '',
+        allLength: 0,
       }
     },
     computed: {
       ...mapGetters({
         allSongs: 'getAllSongs',
         searchKey: 'getSearchKey',
+        selected: 'getSelectedSongs',
+        showList: 'getShowList',
       }),
     },
     watch: {
+      showList(v) {
+        this.allLength = v.filter(i => i.mediamid).length;
+        this.$store.dispatch('updateSelectedSongs',
+          {
+            val: {},
+            len: 0,
+          });
+      },
       search(v) {
         if (this.searchKey !== 'QQ音乐') {
           const data = {
@@ -42,6 +62,7 @@
       },
     },
     methods: {
+      // 修改搜索范围
       changeSearchKey(v) {
         const val = v === 'QQ音乐' ? '列表内' : 'QQ音乐';
         this.$store.dispatch('changeSearchKey', val);
@@ -55,6 +76,7 @@
           this.searchQQMusic(this.search);
         }
       },
+      // 搜索音乐
       searchQQMusic(v) {
         request.qq({
           apiName: 'QQ_SEARCH',
@@ -84,36 +106,77 @@
           this.$store.dispatch('updateShowList', { list: result });
         })
       },
+      // 批量下载
+      downAll() {
+        const list = this.selected.val;
+        const allSongs = this.allSongs;
+        Object.keys(list).forEach(k => list[k] && download(allSongs[k], this));
+      },
+      // 全选
+      selectAll() {
+        const { selected, showList } = this;
+        showList.forEach(o => {
+          if (o.mediamid && !selected.val[o.objectId]) {
+            selected.val[o.objectId] = true;
+            selected.len++;
+          }
+        });
+        this.$store.dispatch('updateSelectedSongs', selected);
+      }
     }
   }
 </script>
 
 <style lang="scss">
-  .el-radio-button__inner {
-    background: transparent !important;
-    color: rgba(255,255,255,0.5) !important;
-    border: 1px rgba(255,255,255,0.5) dashed !important;
-    outline: none;
-    box-shadow: none !important;
-  }
-  .el-radio-button__orig-radio:checked+.el-radio-button__inner {
-    color: white !important;
-    border: 1px solid white !important;
-  }
+  .list-top-container {
+    min-width: 536px;
 
-  .search-input {
-    background: transparent !important;
-    border: transparent;
-    border-bottom: 1px solid rgba(255,255,255, 0.5) !important;
-    color: white;
-    font-size: 20px;
-    outline: none !important;
-    width: 300px;
-    vertical-align: -5px;
-    margin-left: 20px;
+    .top-box {
+      min-width: 464px;
+      color: #fff;
 
-    &::-webkit-input-placeholder {
-      color: rgba(255,255,255,0.5);
+      .top-box-button {
+        display: inline-block;
+        padding: 5px 10px;
+        border: 1px solid #fff;
+        border-radius: 5px;
+        opacity: 0.6;
+        cursor: pointer;
+        transition: 0.3s;
+        margin-right: 20px;
+
+        &:hover {
+          opacity: 0.8;
+        }
+      }
+    }
+
+    .el-radio-button__inner {
+      background: transparent !important;
+      color: rgba(255,255,255,0.5) !important;
+      border: 1px rgba(255,255,255,0.5) dashed !important;
+      outline: none;
+      box-shadow: none !important;
+    }
+    .el-radio-button__orig-radio:checked+.el-radio-button__inner {
+      color: white !important;
+      border: 1px solid white !important;
+    }
+
+    .search-input {
+      background: transparent !important;
+      border: transparent;
+      border-bottom: 1px solid rgba(255,255,255, 0.5) !important;
+      color: white;
+      font-size: 20px;
+      outline: none !important;
+      width: 300px;
+      vertical-align: -5px;
+      margin-left: 20px;
+
+      &::-webkit-input-placeholder {
+        color: rgba(255,255,255,0.5);
+      }
     }
   }
 </style>

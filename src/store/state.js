@@ -35,4 +35,8 @@ export default {
     add: true,
   },
   listLoading: false, // 歌曲列表的loading
+  selectedSongs: { // 选中的歌曲，要进行批量操作的
+    val: {},
+    len: 0,
+  }
 };

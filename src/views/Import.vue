@@ -139,7 +139,7 @@
       getSong(s, i) {
         request.qq({
           apiName: 'QQ_SEARCH',
-          data: { p: 1, n: 1, w: `${s.name} ${s.artist} ${s.desc} ${s.album}`, cr: 1, aggr: 1 },
+          data: { p: 1, n: 1, w: `${s.name} ${s.artist} ${s.album}`, cr: 1, aggr: 1 },
         }, (res) => {
           this.getNum++;
           try {

@@ -3,6 +3,9 @@ import Storage from "../assets/utils/Storage";
 import Num from "../assets/utils/num";
 
 export default {
+  [types.SELECT_SONGS](state, data) {
+    state.selectedSongs = data;
+  },
   [types.UPDATE_ADD_DIR_INFO](state, data) {
     state.add2Dir = data;
   },

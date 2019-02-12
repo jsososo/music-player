@@ -125,6 +125,7 @@
       color: #fff;
       border: 1px solid rgba(255,255,255,0.6);
       width: 120px;
+      font-size: 14px;
       border-radius: 5px;
 
       a {

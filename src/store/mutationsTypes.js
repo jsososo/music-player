@@ -1,3 +1,6 @@
+// 选择歌曲
+export const SELECT_SONGS = 'SELECT_SONGS';
+
 // 我喜欢的歌曲
 export const SET_FAV_LIST = 'SET_FAV_LIST';
 

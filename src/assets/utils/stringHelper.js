@@ -60,9 +60,13 @@ export function handleLyric(str) {
     const time = item.match(/^\[(\d\d:\d\d.\d\d)\]/);
     if (time) {
       const timeArr = time[1].split(':');
+      const s = item.replace(time[0], '').replace(/&amp;apos;/g, "'");
+      if (!s) {
+        return;
+      }
       result.push({
         time: Number(timeArr[0] * 6000) + Number(timeArr[1].replace('.', '')),
-        str: item.replace(time[0], ''),
+        str: s,
       })
     }
   })

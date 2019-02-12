@@ -1,4 +1,8 @@
 export default {
+  // 获取选中的歌曲
+  getSelectedSongs: (state) => {
+    return state.selectedSongs;
+  },
   // 获取我喜欢的列表
   getFavList: (state) => {
     return state.favList;
