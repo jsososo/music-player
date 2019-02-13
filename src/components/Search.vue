@@ -12,6 +12,8 @@
       <div class="top-box-button" @click="selectAll">全 选</div>
       <span class="pr_20">已选择：{{selected.len}}/{{allLength}}</span>
       <div class="top-box-button" @click="downAll">批量下载</div>
+      <div class="top-box-button" @click="addAll(true)">批量添加</div>
+      <div class="top-box-button" @click="addAll(false)" v-if="searchKey === '列表内'">批量删除</div>
     </div>
     <Avatar />
   </div>
@@ -108,6 +110,9 @@
       },
       // 批量下载
       downAll() {
+        if (!this.selected.len) {
+          return;
+        }
         const list = this.selected.val;
         const allSongs = this.allSongs;
         Object.keys(list).forEach(k => list[k] && download(allSongs[k], this));
@@ -122,7 +127,28 @@
           }
         });
         this.$store.dispatch('updateSelectedSongs', selected);
-      }
+      },
+      // 添加或删除全部
+      addAll(add) {
+        if (!this.selected.len) {
+          return;
+        }
+        const song = {
+          songid: [],
+          songmid: [],
+        };
+        const list = this.selected.val;
+        const allSongs = this.allSongs;
+        Object.keys(list).forEach(k => {
+          if (list[k]) {
+            song.songid.push(allSongs[k].songid);
+            song.songmid.push(allSongs[k].songmid);
+          }
+        });
+        song.songid = song.songid.join(',');
+        song.songmid = song.songmid.join(',');
+        this.$store.dispatch('updateAdd2DirInfo', { song, add })
+      },
     }
   }
 </script>

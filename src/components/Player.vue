@@ -23,7 +23,7 @@
           <span>{{playNow.title}}</span>
           <span style="padding-left: 20px;">{{playNow.artist}}</span>
           <span
-            @click="add2Dir({ dirid: favList.id, dissid: favList.disstid }, !Boolean(favList[playNow.songmid]))"
+            @click="add2Dir({ dirid: favList.id, dissid: favList.disstid }, !Boolean(favList[playNow.songmid]), true)"
             style="margin-left: 25px; cursor: pointer;"
             :class="favList[playNow.songmid] ? 'iconfont icon-xihuan iconfont' : 'iconfont icon-weixihuan'">
           </span>
@@ -226,8 +226,8 @@
         this.$store.dispatch(type);
       },
       // 添加到歌单
-      add2Dir(dir, add) {
-        this.$store.dispatch('updateAdd2DirInfo', { song: this.playNow, dir, add })
+      add2Dir(dir, add, fav) {
+        this.$store.dispatch('updateAdd2DirInfo', { song: this.playNow, dir, add, fav })
       },
       down(v) {
         download(v, this)

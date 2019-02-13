@@ -30,10 +30,8 @@
       ...mapGetters({
         tagInfo: 'getTagInfo',
         allSongs: 'getAllSongs',
+        sysTagList: 'getTagList',
       }),
-      sysTagList() {
-        return this.$store.getters.getTagList();
-      },
     },
     methods: {
       // 选中标签，去请求列表內的歌曲

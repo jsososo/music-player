@@ -13,11 +13,12 @@
         <span class="song-artist-txt" @click="playMusic(s.objectId, s.mediamid)">{{s.artist}}</span>
         <span class="song-operation">
           <span
-            @click="like(s, { dirid: favList.id, dissid: favList.disstid }, !Boolean(favList[s.songmid]))"
+            @click="like(s, { dirid: favList.id, dissid: favList.disstid }, !Boolean(favList[s.songmid]), true)"
             :class="favList[s.songmid] ? 'iconfont icon-xihuan iconfont' : 'iconfont icon-weixihuan'">
           </span>
-          <span @click="down(s)" v-if="s.mediamid" class="iconfont icon-xiazai" style="font-size: 16px" />
-          <!--<span class="iconfont icon-tianjia"></span>-->
+          <span @click="down(s)" v-if="s.mediamid" class="iconfont icon-xiazai" style="font-size: 15px;vertical-align: 2px;" />
+          <span class="iconfont icon-tianjia" style="font-size: 14px;vertical-align: 1px;" @click="like(s)"></span>
+          <span v-if="searchKey === '列表内'" class="iconfont icon-shanchu" style="font-size: 18px;" @click="like(s, null, false)"></span>
         </span>
       </span>
     </div>
@@ -27,9 +28,7 @@
 
 <script>
   import { mapGetters } from 'vuex';
-  import Storage from '../assets/utils/Storage';
-  import { getQueryFromUrl, download } from "../assets/utils/stringHelper";
-  import request from '../assets/utils/request';
+  import { download } from "../assets/utils/stringHelper";
 
   export default {
     name: "SongList",
@@ -46,11 +45,12 @@
         favList: 'getFavList',
         tagInfo: 'getTagInfo',
         selected: 'getSelectedSongs',
+        searchKey: 'getSearchKey',
       }),
     },
     methods: {
-      like(song, dir, add) {
-        this.$store.dispatch('updateAdd2DirInfo', { song, dir, add})
+      like(song, dir, add = true, fav) {
+        this.$store.dispatch('updateAdd2DirInfo', { song, dir, add, fav})
       },
       playMusic(id, mediaid) {
         const pDom = document.getElementById('m-player');
@@ -163,7 +163,7 @@
     .song-checkbox {
       display: none;
       width: 10%;
-      padding: 10px;
+      padding: 8px;
       box-sizing: border-box;
 
       .el-checkbox__inner {

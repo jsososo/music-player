@@ -12,8 +12,8 @@ export default {
     return state.add2Dir;
   },
   // 获取系统的tag列表
-  getTagList: (state) => (isSys = true) => {
-    return isSys ? state.sysTags : [];
+  getTagList: (state) => {
+    return state.sysTags;
   },
   // 获取tag的状态信息
   getTagInfo(state) {

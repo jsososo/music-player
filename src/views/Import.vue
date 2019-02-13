@@ -32,7 +32,7 @@
           <span style="color: #fff; opacity: 0.8;font-size: 12px;padding-left: 30px;">
             由于担心频繁的接口调用引起腾讯注意，所以限制为1秒一次请求，请耐心等待
           </span>
-          <!--<el-button @click="likeAll" class="ml_20" size="medium">批量喜欢</el-button>-->
+          <el-button @click="likeAll" class="ml_20" size="medium">批量添加</el-button>
         </div>
         <div class="list-container">
           <div v-for="(s, i) in songList" :class="`song-list-item song-list-item-${i} ${s.selected ? 'selected' : ''}`" :key="s.id">
@@ -50,6 +50,7 @@
                 @click="add2Dir(s.qqInfo, { dirid: favList.id, dissid: favList.disstid }, !Boolean(favList[s.qqInfo.songmid]))"
                 :class="favList[s.qqInfo.songmid] ? 'iconfont icon-xihuan iconfont' : 'iconfont icon-weixihuan'">
               </i>
+              <i class="iconfont icon-tianjia" @click="add2Dir(s.qqInfo, null, true)"></i>
             </div>
           </div>
         </div>
@@ -200,7 +201,22 @@
         this.$store.dispatch('updateAdd2DirInfo', { song, dir, add })
       },
       likeAll() {
-
+        const { selectedNum, selectedVal, songList } = this;
+        const song = {
+          songmid: [],
+          songid: [],
+        };
+        if (selectedNum) {
+          Object.keys(selectedVal).forEach(i => {
+            if (selectedVal[i]) {
+              song.songmid.push(songList[i].qqInfo.songmid);
+              song.songid.push(songList[i].qqInfo.songid);
+            }
+          })
+        }
+        song.songmid = song.songmid.join(',');
+        song.songid = song.songid.join(',');
+        this.add2Dir(song, null, true);
       }
     }
   }
