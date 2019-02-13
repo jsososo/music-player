@@ -10,10 +10,11 @@
     </div>
     <div v-if="selected.len" class="inline-block top-box">
       <div class="top-box-button" @click="selectAll">全 选</div>
-      <span class="pr_20">已选择：{{selected.len}}/{{allLength}}</span>
-      <div class="top-box-button" @click="downAll">批量下载</div>
-      <div class="top-box-button" @click="addAll(true)">批量添加</div>
-      <div class="top-box-button" @click="addAll(false)" v-if="searchKey === '列表内'">批量删除</div>
+      <div class="top-box-button" @click="cancel">取消</div>
+      <span class="pr_15">批量：{{selected.len}}/{{allLength}}</span>
+      <div class="top-box-button" @click="downAll">下载</div>
+      <div class="top-box-button" @click="addAll(true)">添加</div>
+      <div class="top-box-button" @click="addAll(false)" v-if="searchKey === '列表内'">删除</div>
     </div>
     <Avatar />
   </div>
@@ -149,6 +150,13 @@
         song.songmid = song.songmid.join(',');
         this.$store.dispatch('updateAdd2DirInfo', { song, add })
       },
+      cancel() {
+        this.$store.dispatch('updateSelectedSongs',
+          {
+            val: {},
+            len: 0,
+          });
+      }
     }
   }
 </script>
@@ -169,7 +177,7 @@
         opacity: 0.6;
         cursor: pointer;
         transition: 0.3s;
-        margin-right: 20px;
+        margin-right: 8px;
 
         &:hover {
           opacity: 0.8;

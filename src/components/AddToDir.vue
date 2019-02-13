@@ -200,7 +200,7 @@
         request.getQQMyFavList(disstid, uQ, this,
           {
             isFav: disstid === this.favList.disstid,
-            upShow: this.tagInfo.selected.dissid === disstid
+            upShow: this.tagInfo.selected.dissid === disstid && this.searchKey === '列表内'
           },
           (songs) => {
             let resultCount = 0;
