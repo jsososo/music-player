@@ -3,9 +3,11 @@
     <div class="inline-block">
       <div class="pd_20">
         <i class="el-icon-more" @mouseover="showMore = true" style="color: #fff">
+          <div class="down-count" v-if="!showMore && downList.count > 0">{{downList.count > 99 ? '99+' : downList.count}}</div>
           <div :class="`show-container ${showMore ? 'show' : ''}`" @mouseleave="showMore = false">
             <div class="show-more">
               <a href="#/import" style="border: none">导入外部链接</a>
+              <a href="#/download">下载中心 <span v-if="downList.count > 0">({{downList.count > 99 ? '99+' : downList.count}})</span></a>
               <a href="#/version">更新记录</a>
             </div>
           </div>
@@ -60,6 +62,7 @@
       ...mapGetters({
         listContent: 'getListContent',
         showList: 'getShowList',
+        downList: 'getDownList'
       })
     },
     watch: {
@@ -102,6 +105,19 @@
     border-radius: 4px;
     cursor: pointer;
     position: relative;
+
+    .down-count {
+      position: absolute;
+      right: -6px;
+      top: -6px;
+      background: #F23C3C;
+      padding: 3px 6px;
+      font-weight: bold;
+      font-size: 10px;
+      border-radius: 4px;
+      color: #fff;
+
+    }
   }
   .show-container {
     position: absolute;
@@ -116,7 +132,7 @@
 
     &.show {
       opacity: 1;
-      height: 65px;
+      height: 95px;
       padding-top: 30px;
     }
 

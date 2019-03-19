@@ -3,6 +3,7 @@ import Router from 'vue-router'
 import Player from './views/PlayerPage'
 import ImportPage from './views/Import';
 import Version from './views/Version';
+import Download from './views/Download';
 
 Vue.use(Router);
 
@@ -30,6 +31,14 @@ const router = new Router({
       component: Version,
       meta: {
         title: '更新记录',
+      }
+    },
+    {
+      path: '/download',
+      name: 'download',
+      component: Download,
+      meta: {
+        title: '下载中心',
       }
     }
   ]

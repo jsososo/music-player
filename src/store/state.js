@@ -38,5 +38,10 @@ export default {
   selectedSongs: { // 选中的歌曲，要进行批量操作的
     val: {},
     len: 0,
-  }
+  },
+  downSettingDialog: '',
+  downloadList: {
+    list: [],
+    count: 0,
+  },
 };

@@ -2,6 +2,12 @@ import * as types from './mutationsTypes';
 import Num from '../assets/utils/num';
 
 export default {
+  updateDownSettingDialog: ({ commit }, data) => {
+    commit(types.SHOW_DOWN_SETTING, data);
+  },
+  updateDownloadList: ({ commit }, data) => {
+    commit(types.UPDATE_DOWNLOAD_LIST, data);
+  },
   updateSelectedSongs: ({ commit }, data) => {
     commit(types.SELECT_SONGS, data);
   },

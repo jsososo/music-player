@@ -43,6 +43,19 @@
         down_size: 'high',
         down_high: 'sizeflac',
       });
+
+      // 初始化一下下载记录
+      const downList = Storage.get('down_list_info', true, '[]');
+      downList.forEach((item) => {
+        // 一般是之前没有下载完就关掉了页面
+        if (item.status !== 'success') {
+          item.status = 'abort';
+        }
+      });
+      this.$store.dispatch('updateDownloadList', {
+        count: 0,
+        list: downList,
+      });
     },
     methods: {
 

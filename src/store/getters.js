@@ -1,4 +1,12 @@
 export default {
+  // 是否显示下载配置弹窗
+  getDownSettingDialog: (state) => {
+    return state.downSettingDialog;
+  },
+  // 获取下载列表信息
+  getDownList: (state) => {
+    return state.downloadList;
+  },
   // 获取选中的歌曲
   getSelectedSongs: (state) => {
     return state.selectedSongs;

@@ -1,6 +1,65 @@
 <!-- 这就是一个用来添加到歌单到中间层 -->
 <template>
   <div>
+    <!-- 下载相关的设置弹窗 -->
+    <el-dialog
+      width="600px"
+      :visible="Boolean(downSettingStr)"
+      :modal-append-to-body="true"
+      :append-to-body="true"
+      :before-close="() => $store.dispatch('updateDownSettingDialog', '')"
+    >
+      <div>
+        <div class="ft_16 mb_20 fc_666">{{downSettingStr}}</div>
+        <div class="mb_10">
+          <div class="inline-block" style="width: 100px;">
+            仅下载高品质
+          </div>
+          <div class="inline-block" style="width: 460px;">
+            <div><el-switch v-model="downSetting.onlyHigh" /></div>
+            <div>
+              <span v-if="downSetting.onlyHigh" class="fc_999">当选择优先下 无损 \ 320k 时，不会下载 320k,128k \ 128k 的音乐</span>
+              <span v-if="!downSetting.onlyHigh" class="fc_999">当没有优先下的音频时会向下寻找可下载的音乐</span>
+            </div>
+          </div>
+        </div>
+        <div class="mb_10">
+          <div class="inline-block" style="width: 100px;">
+            重复下载
+          </div>
+          <div class="inline-block" style="width: 460px;">
+            <div><el-switch v-model="downSetting.downRepeat" /></div>
+            <div>
+              <span v-if="downSetting.downRepeat" class="fc_999">会一直重复下载</span>
+              <span v-if="!downSetting.downRepeat" class="fc_999">列表内下载成功过的不会重复下载</span>
+            </div>
+          </div>
+        </div>
+        <div class="mb_10">
+          <div class="inline-block" style="width: 90px;line-height: 32px">优先下载</div>
+          <el-select style="width: 200px;margin-left: 10px" v-model="downSize">
+            <el-option
+              v-for="item in sizeArr"
+              v-if="!item.type || item.type === 'down'"
+              :key="item.val"
+              :label="item.label"
+              :value="item.val">
+            </el-option>
+          </el-select>
+        </div>
+        <div class="inline-block mb_10 mt_10" v-if="downSize === 'high'">
+          <div class="inline-block" style="width: 100px;">无损格式：</div>
+          <el-radio-group v-model="downHigh">
+            <el-radio label="sizeflac">flac</el-radio>
+            <el-radio label="sizeape">ape</el-radio>
+          </el-radio-group>
+        </div>
+        <div class="text-right mt_5 mr_10">
+          <el-button type="primary" size="medium" class="inline" @click="$store.dispatch('updateDownSettingDialog', '')">确定</el-button>
+        </div>
+      </div>
+    </el-dialog>
+
     <!-- 不管出现什么错误都去怪cookie -->
     <el-dialog
       width="650px"
@@ -94,6 +153,19 @@
         showDelConfirm: false,
         inputCookie: '',
         selectedTag: {},
+        downSetting: {
+          onlyHigh: 0,
+          downRepeat: 0,
+        },
+        downSize: Storage.get('down_size'),
+        downHigh: Storage.get('down_high'),
+        sizeArr: [
+          { label: '128k', val: 'size128' },
+          { label: '320k', val: 'size320' },
+          // { label: '无损ape', val: 'sizeape' },
+          { label: '无损', val: 'sizeflac', type: 'listen' },
+          { label: '无损', val: 'high', type: 'down' },
+        ],
       }
     },
     watch: {
@@ -123,6 +195,27 @@
           return;
         }
         this.handleAddInfo(data);
+      },
+      downSettingStr(v) {
+        if (v) {
+          this.downSetting = {
+            onlyHigh: Boolean(Number(Storage.get('down-setting-only-high'))),
+            downRepeat: Boolean(Number(Storage.get('down-setting-repeat'))),
+          };
+        } else {
+          const { onlyHigh, downRepeat } = this.downSetting;
+          Storage.set({
+            'down-setting-only-high': Number(onlyHigh),
+            'down-setting-repeat': Number(downRepeat),
+          });
+          this.$message.success('修改成功，下一首生效');
+        }
+      },
+      downSize(v) {
+        Storage.set('down_size', v);
+      },
+      downHigh(v) {
+        Storage.set('down_high', v);
       }
     },
     computed: {
@@ -134,6 +227,8 @@
         add2DirInfo: 'add2DirInfo',
         tagInfo: 'getTagInfo',
         tags: 'getTagList',
+        searchKey: 'getSearchKey',
+        downSettingStr: 'getDownSettingDialog',
       }),
     },
     methods: {
@@ -152,7 +247,7 @@
         if (add) {
           params = { midlist: song.songmid, dirid: dir.dirid, typelist: new Array(song.songmid.split(',').length).fill(13).join(',') };
         } else {
-          params = { uin: Storage.get('uQ'), dirid: dir.dirid, ids: song.songid, types: new Array(song.songid.split(',').length).fill(3).join(',') };
+          params = { uin: Storage.get('uQ'), dirid: dir.dirid, ids: song.songid, types: new Array(String(song.songid).split(',').length).fill(3).join(',') };
           u = 1;
         }
         this.addToDir(params, u, dir.dissid, song.songmid);
@@ -197,6 +292,7 @@
         iframe.src = `${url[u]}?${dataArr.join('&')}`
       },
       checkResult(disstid, uQ, u, id) {
+        console.log(this.tagInfo.selected.dissid, disstid, this.searchKey)
         request.getQQMyFavList(disstid, uQ, this,
           {
             isFav: disstid === this.favList.disstid,

@@ -36,10 +36,19 @@ export default function download(data, strFileName, strMimeType, cb) {
       ajax.open( "GET", url, true);
       ajax.responseType = 'blob';
       ajax.onload= function(e){
-        cb && cb();
+        cb.success();
         download(e.target.response, fileName, defaultMime);
       };
+      // 下载进度
+      ajax.addEventListener('progress', function (e) {
+        if (e.lengthComputable) {
+          var percentComplete = e.loaded / e.total;
+          cb.progress(percentComplete, e.loaded, e.total);
+        }
+      });
       setTimeout(function(){ ajax.send();}, 0); // allows setting custom ajax headers using the return:
+      // 创建之后的回调，这个ajax可以方便用来暂停等。
+      cb.init(ajax);
       return ajax;
     } // end if valid url?
   } // end if url?
@@ -120,9 +129,6 @@ export default function download(data, strFileName, strMimeType, cb) {
     setTimeout(function(){ document.body.removeChild(f); }, 333);
 
   }//end saver
-
-
-
 
   if (navigator.msSaveBlob) { // IE10+ : (has Blob, but not a[download] or URL)
     return navigator.msSaveBlob(blob, fileName);

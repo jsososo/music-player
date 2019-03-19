@@ -1,3 +1,9 @@
+// 显示下载设置弹窗
+export const SHOW_DOWN_SETTING = 'SHOW_DOWN_SETTING';
+
+// 更新下载的列表
+export const UPDATE_DOWNLOAD_LIST = 'UPDATE_DOWNLOAD_LIST';
+
 // 选择歌曲
 export const SELECT_SONGS = 'SELECT_SONGS';
 

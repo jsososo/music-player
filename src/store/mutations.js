@@ -3,6 +3,48 @@ import Storage from "../assets/utils/Storage";
 import Num from "../assets/utils/num";
 
 export default {
+  [types.UPDATE_DOWNLOAD_LIST](state, data) {
+    // 项目初始化的时候从localStorage里直接获取全部的数据
+    // 很暴力的认为如果没有id就是传入整个list
+    if (!data.id) {
+      state.downloadList = data;
+      Storage.set('down_list_info', data.list, true);
+      return;
+    }
+
+    const that = data.that;
+    delete data.that;
+
+    // 更新下载列表，就去找找有没有,如果没找到就直接新增一个
+    const { list } = state.downloadList;
+    const index = list.findIndex((item) => item.id === data.id);
+    if (index === -1) {
+      list.unshift(data);
+    } else {
+      list[index] = { ...list[index], ...data }
+    }
+    switch (data.status) {
+      case 'init':
+        state.downloadList.count += 1;
+        break;
+      case 'success':
+      case 'abort':
+        state.downloadList.count -= 1;
+        delete state.progress;
+        break;
+      case 'error':
+        that.$message.error(`下载失败：${data.reason}，可以去下载中心查看设置`);
+        break;
+      default: break;
+    }
+    state.downloadList = { ...state.downloadList };
+    if (data.status !== 'down') {
+      Storage.set('down_list_info', list, true);
+    }
+  },
+  [types.SHOW_DOWN_SETTING](state, data) {
+    state.downSettingDialog = data;
+  },
   [types.SELECT_SONGS](state, data) {
     state.selectedSongs = data;
   },

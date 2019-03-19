@@ -25,6 +25,7 @@
         grab: false,
         mouseY: 0,
         mouseTop: 0,
+        mouseMove: 0,
         protect: 0, // 保护期，滚完之后给一个保护期，不过这个保护期就不滚动歌词
       }
     },

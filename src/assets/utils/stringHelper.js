@@ -30,7 +30,7 @@ export function getQueryFromUrl(key, search = window.location.hash) {
   }
 }
 
-export function changeUrlQuery(obj, baseUrl = window.location.href) {
+export function changeUrlQuery(obj, baseUrl = window.location.href, update = true) {
   const query = getQueryFromUrl(baseUrl);
   const url = baseUrl.split('?')[0];
 
@@ -41,7 +41,11 @@ export function changeUrlQuery(obj, baseUrl = window.location.href) {
       queryArr.push(`${key}=${newQuery[key]}`);
     }
   });
-  window.location = queryArr.length > 0 ? `${url}?${queryArr.join('&')}` : url;
+  if (update) {
+    window.location = queryArr.length > 0 ? `${url}?${queryArr.join('&')}` : url;
+  } else {
+    return `${url}?${queryArr.join('&')}`;
+  }
 }
 
 /*
@@ -100,7 +104,7 @@ const formatMap = {
   }
 }
 
-export function getSongUrl(v, isDown) {
+export function getSongUrl(v, isDown, onlyHigh) {
   let {listen_size, murl, vkey, guid, down_size, down_high} = Storage.get(['listen_size', 'vkey_expire', 'murl', 'vkey', 'guid', 'down_size', 'down_high']);
   let startSize = listen_size;
   const formatArr = ['sizeflac', 'size320', 'size128'];
@@ -110,6 +114,7 @@ export function getSongUrl(v, isDown) {
   }
   const startFormat = formatArr.indexOf(startSize);
   const formatKey = formatArr.slice(startFormat, 4).find(k => v[k]);
+
   const {s, e, content} = formatMap[formatKey];
   if (!isDown) {
     v.formatKey = formatKey;
@@ -117,57 +122,38 @@ export function getSongUrl(v, isDown) {
   } else {
     v.downAfter = e;
     v.content = content;
-    return [`${murl}${s}${v.mediamid}${e}?guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`, `${v.artist}-${v.title}${v.downAfter}`];
+    // url, 歌名，是否仅下载高品质
+    return [`${murl}${s}${v.mediamid}${e}?guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`, `${v.artist}-${v.title}${v.downAfter}`, onlyHigh && (startSize !== formatKey)];
   }
 }
 
-const downLoading = {};
-
-export function download(v, that) {
-  const [url, name] = getSongUrl(v, true);
-  if (downLoading[url]) {
-    that.$message.warning('这首歌已经在下载了，别急');
+export function download(v, that, onlyHigh = Storage.get('down-setting-only-high'), repeat = Storage.get('down-setting-repeat')) {
+  if (!v.objectId) {
     return;
   }
-  downLoading[url] = true;
-  down(url, name, null, () => downLoading[url] = false);
-}
+  const dispatch = that.$store.dispatch;
+  if (onlyHigh === '' || repeat === '') {
+    return dispatch('updateDownSettingDialog', '您有下载配置还未完善，请先选择（可在下载页修改配置）');
+  }
+  // trueUrl 是通过原有的下载链接点击了重新下载所得到的，所以不需要重新计算了
+  const [url, name, highLimit] = v.trueUrl ? [v.trueUrl, v.name, false] : getSongUrl(v, true, onlyHigh === '1');
+  const time = new Date().getTime();
+  const id = `${v.objectId}-${time}`;
 
-export function u8ToBase64( bytes ) {
-  var base64 = '';
-  var encodings = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-  var byteLength = bytes.byteLength;
-  var byteRemainder = byteLength % 3;
-  var mainLength = byteLength - byteRemainder;
-  var a, b, c, d;
-  var chunk;
-  // Main loop deals with bytes in chunks of 3
-  for (var i = 0; i < mainLength; i = i + 3) {
-    // Combine the three bytes into a single integer
-    chunk = (bytes[i] << 16) | (bytes[i + 1] << 8) | bytes[i + 2];
-    // Use bitmasks to extract 6-bit segments from the triplet
-    a = (chunk & 16515072) >> 18; // 16515072 = (2^6 - 1) << 18
-    b = (chunk & 258048) >> 12; // 258048 = (2^6 - 1) << 12
-    c = (chunk & 4032) >> 6; // 4032 = (2^6 - 1) << 6
-    d = chunk & 63; // 63 = 2^6 - 1
-    // Convert the raw binary segments to the appropriate ASCII encoding
-    base64 += encodings[a] + encodings[b] + encodings[c] + encodings[d];
+  // 列表内已下载的不再下载了
+  if (repeat === '0' &&
+    that.$store.getters.getDownList.list.find(item => item.objectId === v.objectId && item.status === 'success')) {
+    return dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, time, status: 'error', errKey: 'repeat', reason: '已下载过，不再重复下载', that});
   }
-  // Deal with the remaining bytes and padding
-  if (byteRemainder == 1) {
-    chunk = bytes[mainLength];
-    a = (chunk & 252) >> 2 // 252 = (2^6 - 1) << 2;
-    // Set the 4 least significant bits to zero
-    b = (chunk & 3) << 4 // 3 = 2^2 - 1;
-    base64 += encodings[a] + encodings[b] + '==';
+
+  // 仅下载高品质
+  if (highLimit) {
+    return dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, time, status: 'error', errKey: 'ONLY_HIGH', reason: '没有高品质的音乐', that});
   }
-  else if (byteRemainder == 2) {
-    chunk = (bytes[mainLength] << 8) | bytes[mainLength + 1];
-    a = (chunk & 16128) >> 8 // 16128 = (2^6 - 1) << 8;
-    b = (chunk & 1008) >> 4 // 1008 = (2^6 - 1) << 4;
-    // Set the 2 least significant bits to zero
-    c = (chunk & 15) << 2 // 15 = 2^4 - 1;
-    base64 += encodings[a] + encodings[b] + encodings[c] + '=';
-  }
-  return "data:image/jpeg;base64," + base64;
+
+  down(url, name, null, {
+    init: (ajax) => dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, ajax, time, status: 'init' }),
+    progress: (...arg) => dispatch('updateDownloadList', { id, status: 'down', progress: { percent: arg[0], loaded: arg[1], total: arg[2] }}),
+    success: () => dispatch('updateDownloadList', { id, status: 'success', okTime: new Date().getTime() }),
+  });
 }
