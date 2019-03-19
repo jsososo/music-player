@@ -181,6 +181,25 @@
         dispatch('setDownLoading', false);
         dispatch('updatePlayerInfo', { duration: pDom.duration, current: 0 });
       };
+      // 一般是403，高品质的音乐有时候会被qq音乐禁了，这里弄一个向下兼容，如果128也有问题就切歌；
+      pDom.onerror = () => {
+        const playNow = this.playNow;
+        switch (playNow.format) {
+          case 'sizeflac':
+          case 'sizeape':
+          case 'size320':
+            break;
+          case 'size128':
+            this.$message.error('歌曲有问题，自动切到一下首咯');
+            setTimeout(() => {
+              this.cutSong('playNext');
+            }, 3000);
+            return;
+        }
+        playNow[playNow.format] = 0;
+        this.allSongs[playNow.objectId] = playNow;
+        dispatch('updatePlayNow', { ...playNow });
+      };
       // audio正在加载音乐
       pDom.onwaiting = () => dispatch('setDownLoading', true);
       // audio放完了
