@@ -124,7 +124,7 @@ const request = {
       apiName: 'QQ_GET_VKEY',
       cb: 'GET_QQ_VKEY',
     }, res => {
-      const mUrl = res.req_0.data.midurlinfo[0].purl;
+      const mUrl = res.req_0.data.testfile2g;
       const { guid, vkey } = getQueryFromUrl(null, mUrl);
       Storage.set({
         guid,
@@ -132,7 +132,7 @@ const request = {
         vkey_expire: timer().from(90, 'm').str('YYYYMMDDHHmm'),
         // 返回的url信息在播放非128k的音乐时都可能出现403，下面这个链接是从别人的qq音乐项目里找来的
         // murl: res.req_0.data.sip[1] || res.req_0.data.sip[0],
-        murl: 'http://streamoc.music.tc.qq.com/',
+        murl: 'http://183.131.60.16/amobile.music.tc.qq.com/',
       });
     });
   },
