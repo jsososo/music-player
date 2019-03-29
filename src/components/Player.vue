@@ -150,12 +150,17 @@
             data: {
               nobase64: 1,
               songmid: v.objectId,
-            }
-          }, (res) => {
-            song.lyric = handleLyric(res.lyric);
-            dispatch('updateSongDetail', { info: song, index: v.objectId });
-            if (this.playNow.objectId === v.objectId) {
-              dispatch('updatePlayNow', this.allSongs[v.objectId]);
+            },
+            complete: (res) => {
+              if (res.responseText) {
+                song.lyric = handleLyric(JSON.parse(res.responseText).lyric);
+              } else {
+                song.lyric = [{ time: 0, str: '获取歌词失败'}];
+              }
+              dispatch('updateSongDetail', { info: song, index: v.objectId });
+              if (this.playNow.objectId === v.objectId) {
+                dispatch('updatePlayNow', this.allSongs[v.objectId]);
+              }
             }
           });
         }
