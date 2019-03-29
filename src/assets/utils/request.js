@@ -40,9 +40,13 @@ const request = {
       if (!res.data) {
         return;
       }
+      if (res.code === 1000) {
+        _this.$message.error('先去qq音乐官网登陆一下吧');
+        return;
+      }
       _this.$message.success('获取歌单成功～');
       const list = res.data.mydiss.list;
-      const myFav = res.data.mymusic.find(item => item.title === '喜欢');
+      const myFav = res.data.mymusic[0];
       const id = myFav.id;
       // 201是默认值
       const favTag = { title: '我喜欢的', dissid: id, dirid: 201 };
