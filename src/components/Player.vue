@@ -93,6 +93,7 @@
   import request from '../assets/utils/request';
   import { handleLyric, getSongUrl, download } from "../assets/utils/stringHelper";
   import timer from '../assets/utils/timer';
+  import { Base64 } from 'js-base64';
 
   export default {
     name: "PlayerPage",
@@ -148,19 +149,15 @@
           request.qq({
             apiName: 'QQ_GET_LYRIC',
             data: {
-              nobase64: 1,
               songmid: v.objectId,
             },
-            complete: (res) => {
-              if (res.responseText) {
-                song.lyric = handleLyric(JSON.parse(res.responseText).lyric);
-              } else {
-                song.lyric = [{ time: 0, str: '获取歌词失败'}];
-              }
-              dispatch('updateSongDetail', { info: song, index: v.objectId });
-              if (this.playNow.objectId === v.objectId) {
-                dispatch('updatePlayNow', this.allSongs[v.objectId]);
-              }
+            cb: 'MusicJsonCallback_lrc'
+          }, (res) => {
+            song.lyric = handleLyric(Base64.decode(res.lyric));
+            res.trans && (song.lyricTrans = handleLyric(Base64.decode(res.trans)));
+            dispatch('updateSongDetail', { info: song, index: v.objectId });
+            if (this.playNow.objectId === v.objectId) {
+              dispatch('updatePlayNow', this.allSongs[v.objectId]);
             }
           });
         }
