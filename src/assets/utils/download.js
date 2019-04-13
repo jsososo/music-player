@@ -7,7 +7,7 @@
 // v4.2 adds semantic variable names, long (over 2MB) dataURL support, and hidden by default temp anchors
 // https://github.com/rndme/download
 
-export default function download(data, strFileName, strMimeType, cb) {
+export default function download(data, strFileName, strMimeType = null, cb = {}) {
   var self = window, // this script is only for browsers anyway...
     defaultMime = "application/octet-stream", // this default mime also triggers iframe downloads
     mimeType = strMimeType || defaultMime,
@@ -36,19 +36,19 @@ export default function download(data, strFileName, strMimeType, cb) {
       ajax.open( "GET", url, true);
       ajax.responseType = 'blob';
       ajax.onload= function(e){
-        cb.success();
+        cb.success && cb.success();
         download(e.target.response, fileName, defaultMime);
       };
       // 下载进度
       ajax.addEventListener('progress', function (e) {
         if (e.lengthComputable) {
           var percentComplete = e.loaded / e.total;
-          cb.progress(percentComplete, e.loaded, e.total);
+          cb.progress && cb.progress(percentComplete, e.loaded, e.total);
         }
       });
       setTimeout(function(){ ajax.send();}, 0); // allows setting custom ajax headers using the return:
       // 创建之后的回调，这个ajax可以方便用来暂停等。
-      cb.init(ajax);
+      cb.init && cb.init(ajax);
       return ajax;
     } // end if valid url?
   } // end if url?

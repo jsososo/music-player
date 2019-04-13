@@ -77,8 +77,9 @@
       z-index: 0;
       top: 0;
       left: 0;
-      width: 100%;
-      bottom: -10%;
+      min-width: 100vw;
+      min-height: 100vh;
+      bottom: -25%;
       -webkit-filter: blur(50px) brightness(60%);
       -moz-filter: blur(50px) brightness(60%);
       -o-filter: blur(50px) brightness(60%);
@@ -91,7 +92,8 @@
       z-index: -1;
       top: 0;
       left: 0;
-      width: 100%;
+      min-width: 100vw;
+      min-height: 100vh;
     }
 
     .main-container {

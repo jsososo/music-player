@@ -5,7 +5,6 @@ import 'element-ui/lib/theme-chalk/index.css';
 import Element from 'element-ui';
 import './assets/style/icon/iconfont.css';
 import PlayerStore from './store/index';
-import { Message } from 'element-ui';
 
 
 Vue.use(Element, { size: 'small' });

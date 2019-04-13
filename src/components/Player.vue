@@ -1,6 +1,6 @@
 <template>
   <div class="player-container">
-    <div>
+    <div v-if="showControl">
       <!-- 播放，上一首、下一首进度 -->
       <div class="control-btn">
         <div class="inline-block">
@@ -91,7 +91,7 @@
   import Storage from '../assets/utils/Storage';
   import { mapGetters } from 'vuex';
   import request from '../assets/utils/request';
-  import { handleLyric, getSongUrl, download } from "../assets/utils/stringHelper";
+  import { handleLyric, getSongUrl, download, getQueryFromUrl } from "../assets/utils/stringHelper";
   import timer from '../assets/utils/timer';
   import { Base64 } from 'js-base64';
 
@@ -107,6 +107,7 @@
         showOrder: false,
         orderList: ['suiji', 'danquxunhuan', 'liebiao'],
         orderType: Storage.get('orderType'),
+        showControl: !getQueryFromUrl('hideControl'),
       }
     },
     computed: {
@@ -174,6 +175,7 @@
       // slider，进度条
       const sDom = document.getElementsByClassName('el-slider__button el-tooltip')[0];
       const dispatch = this.$store.dispatch;
+      window.onhashchange = () => this.showControl = !getQueryFromUrl('hideControl');
 
       // audio加载完成
       pDom.oncanplaythrough = () => {
@@ -219,7 +221,7 @@
         dispatch('updatePlayerInfo', { current: this.currentTime });
       };
       // 当点击进度条的滑块时需要停止进度的判断，否则松开鼠标后onchange事件无法返回正确的value
-      sDom.onmousedown = () => this.stopUpdateCurrent = true;
+      sDom && (sDom.onmousedown = () => this.stopUpdateCurrent = true);
     },
     methods: {
       formatTooltip(v) {

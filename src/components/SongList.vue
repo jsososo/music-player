@@ -18,6 +18,18 @@
           </span>
           <span @click="down(s)" v-if="s.mediamid" class="iconfont icon-xiazai" style="font-size: 15px;vertical-align: 2px;" />
           <span class="iconfont icon-tianjia" style="font-size: 14px;vertical-align: 1px;" @click="like(s)"></span>
+          <el-popover
+            v-if="!!s.size128"
+            placement="left"
+            trigger="hover"
+            @show="showDownQr(s.songmid)"
+            @hide="showDownQr('', s.songmid)"
+            width="100">
+            <div style="width: 100px;height: 100px;text-align: center;">
+              <Qr v-if="showQr === s.songmid" :value="`http://music.jsososo.com/#/m/d/${downUrl(s)}`" size="100" level="L"/>
+            </div>
+            <span slot="reference" class="iconfont icon-qr" style="font-size: 14px;vertical-align: 1px;"></span>
+          </el-popover>
           <span v-if="searchKey === '列表内'" class="iconfont icon-shanchu" style="font-size: 18px;" @click="like(s, null, false)"></span>
         </span>
       </span>
@@ -28,14 +40,22 @@
 
 <script>
   import { mapGetters } from 'vuex';
-  import { download } from "../assets/utils/stringHelper";
+  import { download, getSongUrl, changeUrlQuery } from "../assets/utils/stringHelper";
+  import Qr from 'qrcode.vue';
+  import Storage from '../assets/utils/Storage';
 
   export default {
     name: "SongList",
+    components: { Qr },
     props: {
       isSys: Boolean,
       tag: String,
       hideHeader: Boolean,
+    },
+    data() {
+      return {
+        showQr: '',
+      }
     },
     computed: {
       ...mapGetters({
@@ -70,6 +90,17 @@
       down(v) {
         download(v, this);
       },
+      downUrl(v) {
+        const info = getSongUrl(v, true);
+        const music = changeUrlQuery({}, info[0], false).replace(Storage.get('murl'), '').replace('?', '');
+        return `?u=${music}&n=${encodeURI(info[1])}&c=${encodeURI(info[3])}`;
+      },
+      showDownQr(v, old) {
+        if (old && this.showQr !== old) {
+          return;
+        }
+        this.showQr = v;
+      },
       select(v) {
         window.event.preventDefault();
         const { selected } = this;
@@ -82,6 +113,9 @@
 </script>
 
 <style lang="scss">
+  .el-popover {
+    min-width: 10px !important;
+  }
   .song-list {
     display: inline-block;
     height: calc(100vh - 200px);

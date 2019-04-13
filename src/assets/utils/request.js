@@ -123,7 +123,7 @@ const request = {
     });
   },
   // 获取vkey
-  getQQVkey() {
+  getQQVkey(cb) {
     request.qq({
       apiName: 'QQ_GET_VKEY',
       cb: 'GET_QQ_VKEY',
@@ -138,6 +138,7 @@ const request = {
         // murl: res.req_0.data.sip[1] || res.req_0.data.sip[0],
         murl: 'http://183.131.60.16/amobile.music.tc.qq.com/',
       });
+      cb && cb();
     });
   },
 };

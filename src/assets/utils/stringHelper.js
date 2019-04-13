@@ -7,7 +7,7 @@ import down from './download';
 * @params key: 想要筛选得到的值， 选填（如果未填，返回一个包含所有query信息的object）
 *
 * */
-export function getQueryFromUrl(key, search = window.location.hash) {
+export function getQueryFromUrl(key, search = window.location.href) {
   try {
     const sArr = search.split('?');
     let s = '';
@@ -25,7 +25,6 @@ export function getQueryFromUrl(key, search = window.location.hash) {
     return key ? result[key] : result;
   } catch (err) {
     // 除去search为空等异常
-    console.log(err);
     return key ? '' : {};
   }
 }
@@ -77,7 +76,7 @@ export function handleLyric(str) {
   return result;
 }
 
-const formatMap = {
+export const formatMap = {
   size128: {
     val: '128k',
       s: 'M500',
@@ -100,7 +99,7 @@ const formatMap = {
     val: '无损flac',
       s: 'F000',
       e: '.flac',
-      content: 'audio/x-flac',
+      content: 'audio/flac',
   }
 }
 
@@ -123,7 +122,12 @@ export function getSongUrl(v, isDown, onlyHigh) {
     v.downAfter = e;
     v.content = content;
     // url, 歌名，是否仅下载高品质
-    return [`${murl}${s}${v.mediamid}${e}?guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`, `${v.artist}-${v.title}${v.downAfter}`, onlyHigh && (startSize !== formatKey)];
+    return [
+      `${murl}${s}${v.mediamid}${e}?guid=${guid}&vkey=${vkey}&fromtag=8&uin=0`,
+      `${v.artist}-${v.title}${v.downAfter}`,
+      onlyHigh && (startSize !== formatKey),
+      v.content,
+    ];
   }
 }
 

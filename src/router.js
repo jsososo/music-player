@@ -4,6 +4,7 @@ import Player from './views/PlayerPage'
 import ImportPage from './views/Import';
 import Version from './views/Version';
 import Download from './views/Download';
+import MobileDown from './views/MobileDown';
 
 Vue.use(Router);
 
@@ -39,6 +40,14 @@ const router = new Router({
       component: Download,
       meta: {
         title: '下载中心',
+      }
+    },
+    {
+      path: '/m/d',
+      name: 'mobileDown',
+      component: MobileDown,
+      meta: {
+        title: '手机下载'
       }
     }
   ]
