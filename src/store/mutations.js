@@ -3,6 +3,10 @@ import Storage from "../assets/utils/Storage";
 import Num from "../assets/utils/num";
 
 export default {
+  // 更新电台信息
+  [types.UPDATE_RADIO_INFO](state, data) {
+    state.radioInfo = { ...state.radioInfo, ...data };
+  },
   [types.UPDATE_DOWNLOAD_LIST](state, data) {
     // 项目初始化的时候从localStorage里直接获取全部的数据
     // 很暴力的认为如果没有id就是传入整个list

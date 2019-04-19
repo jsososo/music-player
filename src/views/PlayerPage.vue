@@ -23,7 +23,8 @@
           <Search />
           <el-carousel :autoplay="false" arrow="never" ref="carousel" @change="changeCarousel">
             <el-carousel-item name="list">
-              <SongList :isSys="tagOwner === '系统'" :tag="tag" />
+              <SongList v-if="searchKey !== '电台'" :isSys="tagOwner === '系统'" :tag="tag" />
+              <RadioList v-if="searchKey === '电台'" />
             </el-carousel-item>
             <el-carousel-item name="lyric">
               <Lyric />
@@ -42,11 +43,12 @@
   import Search from '@/components/Search';
   import TagList from '@/components/TagList';
   import Lyric from '@/components/Lyric';
+  import RadioList from '@/components/RadioList';
   import { mapGetters } from 'vuex';
 
   export default {
     name: "playerpage",
-    components: { Cd, SongList, SongInfo, Search, TagList, Lyric },
+    components: { Cd, SongList, SongInfo, Search, TagList, Lyric, RadioList },
     data() {
       return {
         tag: '',
@@ -62,7 +64,8 @@
       ...mapGetters({
         listContent: 'getListContent',
         showList: 'getShowList',
-        downList: 'getDownList'
+        downList: 'getDownList',
+        searchKey: 'getSearchKey',
       })
     },
     watch: {

@@ -1,3 +1,6 @@
+// 更新电台信息
+export const UPDATE_RADIO_INFO = 'UPDATE_RADIO_INFO';
+
 // 显示下载设置弹窗
 export const SHOW_DOWN_SETTING = 'SHOW_DOWN_SETTING';
 

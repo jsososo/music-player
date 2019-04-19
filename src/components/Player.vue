@@ -20,8 +20,8 @@
         <!-- 歌曲信息 -->
         <div class="song-info">
           <i class="el-icon-loading mr_10" v-if="loading || downloading" />
-          <span>{{playNow.title}}</span>
-          <span style="padding-left: 20px;">{{playNow.artist}}</span>
+          <span class="player-song-title">{{playNow.title}}</span>
+          <span class="player-song-singer pl_20">{{playNow.artist}}</span>
           <span
             @click="add2Dir({ dirid: favList.id, dissid: favList.disstid }, !Boolean(favList[playNow.songmid]), true)"
             style="margin-left: 25px; cursor: pointer;"
@@ -418,6 +418,14 @@
         cursor: pointer;
         line-height: 50px;
       }
+    }
+
+    .player-song-singer, .player-song-title {
+      display: inline-block;
+      max-width: 250px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 </style>
