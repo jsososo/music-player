@@ -159,5 +159,6 @@ export function download(v, that, onlyHigh = Storage.get('down-setting-only-high
     init: (ajax) => dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, ajax, time, status: 'init' }),
     progress: (...arg) => dispatch('updateDownloadList', { id, status: 'down', progress: { percent: arg[0], loaded: arg[1], total: arg[2] }}),
     success: () => dispatch('updateDownloadList', { id, status: 'success', okTime: new Date().getTime() }),
+    error: () => dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, time, status: 'error', errKey: 'DOWLOAD_ERROR', reason: '下载中出错了', that, downloading: true }),
   });
 }

@@ -36,8 +36,11 @@ export default function download(data, strFileName, strMimeType = null, cb = {})
       ajax.open( "GET", url, true);
       ajax.responseType = 'blob';
       ajax.onload= function(e){
-        cb.success && cb.success();
-        download(e.target.response, fileName, defaultMime);
+        if (e.currentTarget.status === 200) {
+          cb.success && cb.success();
+          download(e.target.response, fileName, defaultMime);
+        }
+        cb.error && cb.error();
       };
       // 下载进度
       ajax.addEventListener('progress', function (e) {

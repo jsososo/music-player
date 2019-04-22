@@ -34,6 +34,9 @@ export default {
         break;
       case 'error':
         that.$message.error(`下载失败：${data.reason}，可以去下载中心查看设置`);
+        if (data.downloading) {
+          state.downloadList.count -= 1;
+        }
         break;
       default: break;
     }
