@@ -191,7 +191,7 @@ const request = {
       res.songlist.data.tracks.forEach((s) => {
         const song = {
           from: 'qq',
-          album: s.album,
+          album: s.album.title,
           albummid: s.album.mid,
           title: s.title,
           albumdesc: s.subtitle || '',
