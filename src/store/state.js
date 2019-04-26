@@ -20,7 +20,7 @@ export default {
     index: -1,
   },
   tagInfo: {
-    isSys: true,
+    isSys: true, // 是否为用户的分类
     selected: '',
     playing: '',
   },
@@ -44,4 +44,16 @@ export default {
     list: [],
     count: 0,
   },
+  radioInfo: { // 电台信息
+    radioMap: {}, // 全部的电台信息
+    tag: {}, // 电台分类
+    selected: {
+      tagId: 48,
+    },
+    playing: {
+      tagId: 48,
+    },
+    isPlay: false, // 是否在播放电台
+    show: false, // 是否展示电台
+  }
 };

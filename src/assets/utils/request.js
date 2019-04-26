@@ -141,6 +141,79 @@ const request = {
       cb && cb();
     });
   },
+  // 获取电台信息
+  getQQRadio(id) {
+    request.qq({
+      apiName: 'QQ_RADIO_INFO',
+      data: {
+        loginUin: Storage.get('uQ'),
+        data: JSON.stringify({
+          songlist: {
+            module: "mb_track_radio_svr",
+            method: "get_radio_track",
+            param: {
+              id: id || 99,
+              firstplay: 1,
+              num: 15
+            },
+          },
+          radiolist: {
+            module: "pf.radiosvr",
+            method: "GetRadiolist",
+            param: {
+              ct: "24"
+            },
+          },
+          comm: {
+            ct: 24,
+            cv: 0
+          },
+        }),
+      },
+      cb: 'getQQRadioInfo',
+    }, (res) => {
+      const { allSongs, radioInfo } = window.VUE_APP;
+      const dispatch = window.VUE_APP.$store.dispatch;
+      const radioMap = {};
+      if (!id) {
+        const tags = {};
+        res.radiolist.data.radio_list.forEach((item) => {
+          item.list.forEach((r) => radioMap[r.id] = r);
+          tags[item.id] = item;
+        });
+
+        radioInfo.tag = tags;
+        radioInfo.radioMap = radioMap;
+      }
+      radioInfo.selected.radioId = id;
+
+      const songs = [];
+      res.songlist.data.tracks.forEach((s) => {
+        const song = {
+          from: 'qq',
+          album: s.album,
+          albummid: s.album.mid,
+          title: s.title,
+          albumdesc: s.subtitle || '',
+          songmid: s.mid,
+          mediamid: s.file.size_128mp3 ? s.file.media_mid : '', // 这才是真正去换媒体文件的 如果连128的格式都没有的话就当作没这首歌了
+          artist: s.singer.map(s => s.title).join('/'),
+          objectId: s.mid,
+          cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${s.album.mid}.jpg`,
+          size128: s.file.size_128mp3,
+          size320: s.file.size_320mp3,
+          sizeape: s.file.size_ape,
+          sizeflac: s.file.size_flac,
+          songid: s.id,
+        };
+        songs.push(song);
+        allSongs[song.songmid] = song;
+      });
+      radioInfo.radioMap[id || 99].songs = [ ...(radioInfo.radioMap[id || 99].songs || []), ...songs ];
+      dispatch('updateAllSongs', allSongs);
+      dispatch('updateRadioInfo', radioInfo);
+    })
+  }
 };
 
 export default request;

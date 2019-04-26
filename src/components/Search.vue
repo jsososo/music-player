@@ -1,12 +1,16 @@
 <template>
   <div class="mb_20 list-top-container">
     <div v-if="!selected.len" class="inline-block top-box">
-      <el-radio-group :value="searchKey" @change="changeSearchKey">
-        <el-radio-button label="列表内"></el-radio-button>
-        <!--<el-radio-button label="站内"></el-radio-button>-->
-        <el-radio-button label="QQ音乐"></el-radio-button>
-      </el-radio-group>
-      <input type="text" class="search-input" placeholder="找点什么吧" v-model="search">
+      <el-button :class="`key-select-btn ${searchKey === '列表内' && 'active'}`" @click="changeSearchKey('列表内')">
+        列表内
+      </el-button>
+      <el-button :class="`key-select-btn ${searchKey === 'QQ音乐' && 'active'}`" @click="changeSearchKey('QQ音乐')">
+        QQ音乐
+      </el-button>
+      <el-button :class="`key-select-btn ${searchKey === '电台' && 'active'}`" @click="changeSearchKey('电台')">
+        电台
+      </el-button>
+      <input :disabled="searchKey === '电台'" type="text" :class="`search-input ${searchKey === '电台' && 'half-hide'}`" placeholder="找点什么吧" v-model="search">
     </div>
     <div v-if="selected.len" class="inline-block top-box">
       <div class="top-box-button" @click="selectAll">全 选</div>
@@ -41,6 +45,7 @@
         searchKey: 'getSearchKey',
         selected: 'getSelectedSongs',
         showList: 'getShowList',
+        radioInfo: 'getRadioInfo',
       }),
     },
     watch: {
@@ -67,17 +72,22 @@
     methods: {
       // 修改搜索范围
       changeSearchKey(v) {
-        const val = v === 'QQ音乐' ? '列表内' : 'QQ音乐';
-        this.$store.dispatch('changeSearchKey', val);
-        if (v === 'QQ音乐') {
-          const data = {
-            search: this.search.replace(/\s|,|，|\//g, ''),
-            isAll: v === '站内',
-          };
-          this.$store.dispatch('searchMusic', data);
-        } else {
-          this.searchQQMusic(this.search);
+        switch (v) {
+          case 'QQ音乐':
+            this.searchQQMusic(this.search);
+            break;
+          case '列表内':
+            this.$store.dispatch('searchMusic', {
+              search: this.search.replace(/\s|,|，|\//g, ''),
+              isAll: v === '站内',
+            });
+            break;
+          case '电台':
+            this.$store.dispatch('updateRadioInfo', { show: true });
+            break;
+          default: break;
         }
+        this.$store.dispatch('changeSearchKey', v);
       },
       // 搜索音乐
       searchQQMusic(v) {
@@ -183,18 +193,28 @@
           opacity: 0.8;
         }
       }
+
+      .el-button+.el-button {
+        margin-left: -1px;
+      }
     }
 
-    .el-radio-button__inner {
+    .half-hide {
+      opacity: 0.5;
+    }
+
+    .key-select-btn {
       background: transparent !important;
       color: rgba(255,255,255,0.5) !important;
       border: 1px rgba(255,255,255,0.5) dashed !important;
       outline: none;
       box-shadow: none !important;
-    }
-    .el-radio-button__orig-radio:checked+.el-radio-button__inner {
-      color: white !important;
-      border: 1px solid white !important;
+      margin-left: 0;
+
+      &.active {
+        color: white !important;
+        border: 1px solid white !important;
+      }
     }
 
     .search-input {
@@ -204,7 +224,7 @@
       color: white;
       font-size: 20px;
       outline: none !important;
-      width: 300px;
+      width: 245px;
       vertical-align: -5px;
       margin-left: 20px;
 

@@ -1,5 +1,11 @@
+// 更新电台信息
+export const UPDATE_RADIO_INFO = 'UPDATE_RADIO_INFO';
+
 // 显示下载设置弹窗
 export const SHOW_DOWN_SETTING = 'SHOW_DOWN_SETTING';
+
+// 电台的下一曲
+export const RADIO_PLAY_NEXT = 'RADIO_PLAY_NEXT';
 
 // 更新下载的列表
 export const UPDATE_DOWNLOAD_LIST = 'UPDATE_DOWNLOAD_LIST';
