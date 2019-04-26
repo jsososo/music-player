@@ -209,6 +209,9 @@
       pDom.onwaiting = () => dispatch('setDownLoading', true);
       // audio放完了
       pDom.onended = () => {
+        if (this.radioInfo.selected.radioId) {
+          return this.cutSong('playNext');
+        }
         if (this.orderType !== 'danquxunhuan') {
           dispatch('playNext');
         } else {
