@@ -155,7 +155,7 @@
             },
             cb: 'MusicJsonCallback_lrc'
           }, (res) => {
-            song.lyric = handleLyric(Base64.decode(res.lyric));
+            res.lyric && (song.lyric = handleLyric(Base64.decode(res.lyric)));
             res.trans && (song.lyricTrans = handleLyric(Base64.decode(res.trans)));
             dispatch('updateSongDetail', { info: song, index: v.objectId });
             if (this.playNow.objectId === v.objectId) {
