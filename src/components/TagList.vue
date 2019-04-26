@@ -1,13 +1,22 @@
 <template>
   <div :class="`tag-list-container ${showList ? 'show-list' : 'hide-list'}`" @mouseover="showList = true" @mouseout="showList = false">
     <i class="iconfont icon-arrow-left show-tag-btn" @mouseover="showList = true" />
-    <div class="tag-list">
+    <div class="tag-list" v-if="searchKey !== '电台'">
       <div
         :class="`tag-item
         ${tagInfo.isSys && tagInfo.selected && tagInfo.selected.dissid === item.dissid && 'selected'}
         ${tagInfo.playing === item && 'playing'}`"
         v-for="(item, index) in sysTagList" :key="`tag-${item}-${index}`"
         @click="selectTag(item.dissid)"
+      >{{item.title}}</div>
+    </div>
+    <div class="tag-list" v-if="searchKey === '电台'">
+      <div
+        :class="`tag-item
+        ${radioInfo.selected.tagId === item.id && 'selected'}
+        ${radioInfo.playing.tagId === item.id && 'playing'}`"
+        v-for="(item) in radioInfo.tag" :key="`tag-${item.title}-${item.id}`"
+        @click="selectRadioTag(item.id)"
       >{{item.title}}</div>
     </div>
   </div>
@@ -31,6 +40,8 @@
         tagInfo: 'getTagInfo',
         allSongs: 'getAllSongs',
         sysTagList: 'getTagList',
+        searchKey: 'getSearchKey',
+        radioInfo: 'getRadioInfo',
       }),
     },
     methods: {
@@ -42,6 +53,12 @@
         dispatch('changeSearchKey', '列表内');
         request.getQQMyFavList(id, Storage.get('uQ'), this, { upShow: true });
       },
+      selectRadioTag(id) {
+        const { dispatch } = this.$store;
+        const { radioInfo } = this;
+        radioInfo.selected.tagId = id;
+        dispatch('updateRadioInfo', radioInfo);
+      }
     },
   }
 </script>

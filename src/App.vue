@@ -15,6 +15,7 @@
   import Player from './components/Player';
   import AddToDir from './components/AddToDir';
   import request from './assets/utils/request';
+  import { mapGetters } from 'vuex';
 
   export default {
     name: 'App',
@@ -24,7 +25,14 @@
         defaultActive: '/',
       }
     },
+    computed: {
+      ...mapGetters({
+        allSongs: 'getAllSongs',
+        radioInfo: 'getRadioInfo',
+      })
+    },
     created() {
+      window.VUE_APP = this;
       // 获取vkey
       request.getQQVkey();
       // 播放顺序，qq号的一些配置
@@ -56,6 +64,8 @@
         count: 0,
         list: downList,
       });
+
+      request.getQQRadio(null, this);
     },
     methods: {
 

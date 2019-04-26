@@ -3,7 +3,6 @@ export default {
   getRadioInfo: (state) => {
     return state.radioInfo;
   },
-
   // 是否显示下载配置弹窗
   getDownSettingDialog: (state) => {
     return state.downSettingDialog;

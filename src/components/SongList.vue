@@ -66,6 +66,7 @@
         tagInfo: 'getTagInfo',
         selected: 'getSelectedSongs',
         searchKey: 'getSearchKey',
+        radioInfo: 'getRadioInfo',
       }),
     },
     methods: {
@@ -74,11 +75,18 @@
       },
       playMusic(id, mediaid) {
         const pDom = document.getElementById('m-player');
+        const { radioInfo } = this;
+        const dispatch = this.$store.dispatch;
         if (!mediaid) {
           this.$message.info('企鹅音乐暂无版权～');
           return;
         }
-        const dispatch = this.$store.dispatch;
+        // 删除电台信息
+        radioInfo.playing.radioId = '';
+        radioInfo.selected.radioId = '';
+        dispatch('updateRadioInfo', radioInfo);
+
+        // 播放状态
         dispatch('updatePlayingStatus', true);
         pDom.play();
         if (this.playNow.objectId !== id) {

@@ -5,6 +5,9 @@ export default {
   updateRadioInfo: ({ commit }, data) => {
     commit(types.UPDATE_RADIO_INFO, data);
   },
+  radioPlayNext: ({ commit }, data) => {
+    commit(types.RADIO_PLAY_NEXT, data);
+  },
   updateDownSettingDialog: ({ commit }, data) => {
     commit(types.SHOW_DOWN_SETTING, data);
   },

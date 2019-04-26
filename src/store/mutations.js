@@ -1,11 +1,41 @@
 import * as types from './mutationsTypes';
 import Storage from "../assets/utils/Storage";
 import Num from "../assets/utils/num";
+import request from '../assets/utils/request';
 
 export default {
   // 更新电台信息
   [types.UPDATE_RADIO_INFO](state, data) {
     state.radioInfo = { ...state.radioInfo, ...data };
+    const sId = state.radioInfo.selected.radioId;
+    if (!sId) {
+      return;
+    }
+    if (state.radioInfo.playing.radioId !== sId) {
+      window.VUE_APP.$store.dispatch('radioPlayNext', { id: sId });
+    }
+  },
+  // 更新电台的播放顺序
+  [types.RADIO_PLAY_NEXT](state, { id, next = true }) {
+    const { radioInfo } = state;
+    const radioObj = radioInfo.radioMap[id];
+    radioInfo.playing.radioId = id;
+    radioObj.index = radioObj.index || 0;
+    if (!next) {
+      radioObj.index -= 2;
+    }
+    if (radioObj.index < 0) {
+      radioObj.index += radioObj.songs.length
+    }
+    const song = radioObj.songs[radioObj.index];
+    radioObj.index += 1;
+    if (radioObj.index + 2 >= radioObj.songs.length) {
+      request.getQQRadio(id);
+    }
+    state.playNow = song;
+    state.loading = false;
+    state.playerInfo.duration = 0;
+    state.playing = true;
   },
   [types.UPDATE_DOWNLOAD_LIST](state, data) {
     // 项目初始化的时候从localStorage里直接获取全部的数据
@@ -181,21 +211,19 @@ export default {
     }
     if (state.searchKey === 'QQ音乐') {
       state.playingList = (state.showList || []).filter(item => item.mediamid);
+      state.tagInfo.playing = state.tagInfo.selected;
     } else if (state.searchKey === '列表内') {
       state.playingList = (state.sysSongs[state.tagInfo.selected.dissid] || []).filter(item => item.mediamid);
     }
     // 如果是向下播放一首新的随机音乐。就记录到randomHistory里
-    if (Storage.get('orderType') === 'suiji' && (rL[rL.length - 1] !== data.objectId)) {
+    if (Storage.get('orderType') === 'suiji' && (rL[rL.length - 1] !== data.objectId) && state.radioInfo.playing.radioId) {
       rL.push(data.objectId);
       state.randomHistory.index = rL.length - 1;
     }
-    state.tagInfo.playing = state.tagInfo.selected;
     state.playerInfo.duration = 0;
     // this.commit('getPlayNowTag');
   },
   [types.SET_SYS_TAG](state, data) {
-    // state.sysObjectId = data.objectId;
-    // state.sysSongs = data.tags;
     state.sysTags = data;
   },
   [types.SET_ALL_SONGS](state, data) {

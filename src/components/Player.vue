@@ -119,6 +119,7 @@
         loading: 'isLoading',
         allSongs: 'getAllSongs',
         favList: 'getFavList',
+        radioInfo: 'getRadioInfo',
       }),
     },
     watch: {
@@ -218,7 +219,7 @@
       // 音乐播放时进度条
       pDom.ontimeupdate = () => {
         !this.stopUpdateCurrent && (this.currentTime = this.playNow.url ? pDom.currentTime : 0);
-        dispatch('updatePlayerInfo', { current: this.currentTime });
+        dispatch('updatePlayerInfo', { current: this.currentTime, duration: pDom.duration });
       };
       // 当点击进度条的滑块时需要停止进度的判断，否则松开鼠标后onchange事件无法返回正确的value
       sDom && (sDom.onmousedown = () => this.stopUpdateCurrent = true);
@@ -246,7 +247,13 @@
       // 切歌。包括上一首。下一首
       cutSong(type) {
         this.playerDom.pause();
-        this.$store.dispatch(type);
+        const sRId = this.radioInfo.selected.radioId;
+        // 是否是电台模式
+        if (sRId) {
+          this.$store.dispatch('radioPlayNext', { id: sRId, next: type === 'playNext' })
+        } else {
+          this.$store.dispatch(type);
+        }
       },
       // 添加到歌单
       add2Dir(dir, add, fav) {
