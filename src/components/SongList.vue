@@ -144,23 +144,9 @@
 
     &::-webkit-scrollbar
     {
-      width:8px;
+      width: 0;
       height:8px;
       background-color:rgba(0,0,0,0);
-    }
-    /*定义滚动条轨道
-     内阴影+圆角*/
-    &::-webkit-scrollbar-track
-    {
-      border-radius:10px;
-      background-color: rgba(255,255,255,0.1);
-    }
-    /*定义滑块
-     内阴影+圆角*/
-    &::-webkit-scrollbar-thumb
-    {
-      border-radius:10px;
-      background-color:rgba(255,255,255,0.5);
     }
   }
 

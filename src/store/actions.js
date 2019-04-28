@@ -2,6 +2,9 @@ import * as types from './mutationsTypes';
 import Num from '../assets/utils/num';
 
 export default {
+  changeShowComment: ({ commit }) => {
+    commit(types.CHANGE_SHOW_COMMENT);
+  },
   updateRadioInfo: ({ commit }, data) => {
     commit(types.UPDATE_RADIO_INFO, data);
   },

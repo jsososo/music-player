@@ -1,5 +1,5 @@
 <template>
-  <div :class="`play-cd-container playing-${$store.state.playing} loading-${$store.state.loading}`">
+  <div :class="`play-cd-container pl_20 playing-${$store.state.playing} loading-${$store.state.loading}`">
     <div class="cd-bg">
       <img v-if="playNow.cover" :src="playNow.cover" onerror="this.src='https://y.gtimg.cn/music/photo_new/T002R300x300M000001ZaCQY2OxVMg.jpg'">
     </div>

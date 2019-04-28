@@ -13,6 +13,9 @@
       <span class="info-key">专辑：</span>
       <span>{{playNow.album}}</span>
     </div>
+    <div class="info-row pointer" v-if="playNow.comment && playNow.comment.length > 0" @click="$store.dispatch('changeShowComment')">
+      查看评论
+    </div>
   </div>
 </template>
 

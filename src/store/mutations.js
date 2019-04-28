@@ -4,6 +4,9 @@ import Num from "../assets/utils/num";
 import request from '../assets/utils/request';
 
 export default {
+  [types.CHANGE_SHOW_COMMENT](state) {
+    state.showComment = !state.showComment;
+  },
   // 更新电台信息
   [types.UPDATE_RADIO_INFO](state, data) {
     state.radioInfo = { ...state.radioInfo, ...data };
@@ -197,6 +200,9 @@ export default {
       ...(state.allSongs[index]),
       ...info,
     };
+    if (index === state.playNow.objectId) {
+      state.playNow = state.allSongs[index];
+    }
   },
   [types.UPDATE_PLAYING_STATUS](state, data) {
     state.playing = data;

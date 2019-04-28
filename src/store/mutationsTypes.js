@@ -1,3 +1,6 @@
+// 是否显示评论
+export const CHANGE_SHOW_COMMENT = 'CHANGE_SHOW_COMMENT';
+
 // 更新电台信息
 export const UPDATE_RADIO_INFO = 'UPDATE_RADIO_INFO';
 

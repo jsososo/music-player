@@ -1,7 +1,7 @@
 <template>
   <div>
-    <div class="inline-block">
-      <div class="pd_20">
+    <div class="page-left-container">
+      <div class="pt_20 pl_20">
         <i class="el-icon-more" @mouseover="showMore = true" style="color: #fff">
           <div class="down-count" v-if="!showMore && downList.count > 0">{{downList.count > 99 ? '99+' : downList.count}}</div>
           <div :class="`show-container ${showMore ? 'show' : ''}`" @mouseleave="showMore = false">
@@ -12,25 +12,24 @@
             </div>
           </div>
         </i>
-        <Cd />
       </div>
-      <SongInfo />
+      <Cd v-if="!showComment" />
+      <SongInfo v-if="!showComment" />
+      <Comment v-if="showComment" />
     </div>
     <div class="song-container">
-      <div>
-        <TagList />
-        <div class="inline-block">
-          <Search />
-          <el-carousel :autoplay="false" arrow="never" ref="carousel" @change="changeCarousel">
-            <el-carousel-item name="list">
-              <SongList v-if="searchKey !== '电台'" :isSys="tagOwner === '系统'" :tag="tag" />
-              <RadioList v-if="searchKey === '电台'" />
-            </el-carousel-item>
-            <el-carousel-item name="lyric">
-              <Lyric />
-            </el-carousel-item>
-          </el-carousel>
-        </div>
+      <TagList />
+      <div class="inline-block">
+        <Search />
+        <el-carousel :autoplay="false" arrow="never" ref="carousel" @change="changeCarousel">
+          <el-carousel-item name="list">
+            <SongList v-if="searchKey !== '电台'" :isSys="tagOwner === '系统'" :tag="tag" />
+            <RadioList v-if="searchKey === '电台'" />
+          </el-carousel-item>
+          <el-carousel-item name="lyric">
+            <Lyric />
+          </el-carousel-item>
+        </el-carousel>
       </div>
     </div>
   </div>
@@ -44,11 +43,12 @@
   import TagList from '@/components/TagList';
   import Lyric from '@/components/Lyric';
   import RadioList from '@/components/RadioList';
+  import Comment from '@/components/Comment';
   import { mapGetters } from 'vuex';
 
   export default {
     name: "playerpage",
-    components: { Cd, SongList, SongInfo, Search, TagList, Lyric, RadioList },
+    components: { Cd, SongList, SongInfo, Search, TagList, Lyric, RadioList, Comment },
     data() {
       return {
         tag: '',
@@ -66,6 +66,7 @@
         showList: 'getShowList',
         downList: 'getDownList',
         searchKey: 'getSearchKey',
+        showComment: 'getShowComment',
       })
     },
     watch: {
@@ -102,6 +103,17 @@
 </script>
 
 <style lang="scss">
+  .page-left-container {
+    width: calc(100vw - 635px);
+    height: calc(100vh - 110px);
+    display: inline-block;
+    overflow-y: auto;
+
+    &::-webkit-scrollbar
+    {
+      width:0;
+    }
+  }
   .el-icon-more {
     background: rgba(255,255,255,0.2);
     padding: 2px 8px;
@@ -132,6 +144,11 @@
     height: 0;
     padding-top: 0;
     overflow: hidden;
+
+    &::-webkit-scrollbar
+    {
+      width:0;
+    }
 
     &.show {
       opacity: 1;
@@ -174,6 +191,8 @@
   .song-container {
     display: inline-block;
     vertical-align: top;
-    float: right;
+    position: absolute;
+    right: 20px;
+    top: 20px;
   }
 </style>

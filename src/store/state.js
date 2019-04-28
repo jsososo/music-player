@@ -2,6 +2,7 @@ export default {
   sysTags: [],
   allSongs: {},
   userSongs: {},
+  showComment: false,
   playNow: {
     cover: '',
   },

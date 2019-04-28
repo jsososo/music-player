@@ -1,4 +1,8 @@
 export default {
+  // 是否显示评论
+  getShowComment: (state) => {
+    return state.showComment;
+  },
   // 获取电台信息
   getRadioInfo: (state) => {
     return state.radioInfo;

@@ -158,8 +158,33 @@
             res.lyric && (song.lyric = handleLyric(Base64.decode(res.lyric)));
             res.trans && (song.lyricTrans = handleLyric(Base64.decode(res.trans)));
             dispatch('updateSongDetail', { info: song, index: v.objectId });
-            if (this.playNow.objectId === v.objectId) {
-              dispatch('updatePlayNow', this.allSongs[v.objectId]);
+
+            if (!v.comment) {
+              request.qq({
+                apiName: 'QQ_GET_COMMENT',
+                data: {
+                  biztype: 1,
+                  topid: v.songid,
+                  cmd: 8,
+                  pagenum: 0,
+                  pagesize: 30,
+                },
+                dataType: 'json',
+              }, (res) => {
+                if (!res.hot_comment.commentlist) {
+                  res.hot_comment.commentlist = res.comment.commentlist;
+                }
+                if (res.hot_comment.commentlist) {
+                  v.comment = res.hot_comment.commentlist.map((cVal) => ({
+                    nick: cVal.nick,
+                    avatar: cVal.avatarurl,
+                    id: cVal.commentid,
+                    content: cVal.rootcommentcontent,
+                    time: cVal.time,
+                  }));
+                  dispatch('updateSongDetail', { info: v, index: v.objectId });
+                }
+              })
             }
           });
         }
