@@ -9,8 +9,8 @@
     <div v-for="item in (playNow.comment || [])" :key="item.id" class="comment-detail">
       <img class="comment-avatar" :src="item.avatar" :alt="item.nick">
       <div class="inline-block pl_20" style="width: calc(100% - 100px);">
-        <b class="comment-nick">{{item.nick}}：</b>
-        <div class="comment-content" v-html="item.content"></div>
+        <b class="comment-nick">{{item.nick}}</b>
+        <div class="comment-content" v-html="handleContent(item.content)"></div>
       </div>
     </div>
     <div v-if="(playNow.comment || []).length === 0" class="text-center pt_30">
@@ -29,6 +29,11 @@
         playNow: 'getPlaying',
       }),
     },
+    methods: {
+      handleContent(v) {
+        return v.replace(/^\\n/, '').replace(/\\n|\n/g, '<br/>')
+      }
+    }
   }
 </script>
 
