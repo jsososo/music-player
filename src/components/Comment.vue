@@ -10,6 +10,7 @@
       <img class="comment-avatar" :src="item.avatar" :alt="item.nick">
       <div class="inline-block pl_20" style="width: calc(100% - 100px);">
         <b class="comment-nick">{{item.nick}}</b>
+        <span class="pl_15 comment-time">{{getTime(item.time)}}</span>
         <div class="comment-content" v-html="handleContent(item.content)"></div>
       </div>
     </div>
@@ -31,7 +32,10 @@
     },
     methods: {
       handleContent(v) {
-        return v.replace(/^\\n/, '').replace(/\\n|\n/g, '<br/>')
+        return (v || '').replace(/^\\n/, '').replace(/\\n|\n/g, '<br/>')
+      },
+      getTime(v) {
+        return timer(v * 1000).str('YY-MM-DD HH:mm')
       }
     }
   }
@@ -57,7 +61,7 @@
       .comment-content {
         opacity: 0.7;
       }
-      .comment-nick {
+      .comment-nick, .comment-time  {
         line-height: 40px;
         vertical-align: top;
       }

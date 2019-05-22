@@ -225,7 +225,7 @@ export default {
       state.playingList = (state.sysSongs[state.tagInfo.selected.dissid] || []).filter(item => item.mediamid);
     }
     // 如果是向下播放一首新的随机音乐。就记录到randomHistory里
-    if (Storage.get('orderType') === 'suiji' && (rL[rL.length - 1] !== data.objectId) && state.radioInfo.playing.radioId) {
+    if (Storage.get('orderType') === 'suiji' && (rL[rL.length - 1] !== data.objectId) && !state.radioInfo.playing.radioId) {
       rL.push(data.objectId);
       state.randomHistory.index = rL.length - 1;
     }
