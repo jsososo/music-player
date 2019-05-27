@@ -2,6 +2,9 @@ import * as types from './mutationsTypes';
 import Num from '../assets/utils/num';
 
 export default {
+  changeSearchQuery: ({ commit }, data) => {
+    commit(types.CHANGE_SEARCH_QUERY, data);
+  },
   changeShowComment: ({ commit }) => {
     commit(types.CHANGE_SHOW_COMMENT);
   },

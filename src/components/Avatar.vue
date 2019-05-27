@@ -93,7 +93,7 @@
       login() {
         Storage.set('uQ', this.username);
         if (this.username) {
-          request.getQQList(this);
+          request.getQQList();
         }
         this.showLoginDialog = false;
       },

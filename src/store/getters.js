@@ -1,4 +1,8 @@
 export default {
+  // 获取搜索参数
+  getSearchQuery: (state) => {
+    return state.searchQuery;
+  },
   // 是否显示评论
   getShowComment: (state) => {
     return state.showComment;

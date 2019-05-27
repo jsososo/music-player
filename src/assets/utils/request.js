@@ -26,8 +26,9 @@ const request = {
     }
   },
   // 获取qq音乐列表
-  getQQList(_this) {
-    const { dispatch } = _this.$store;
+  getQQList() {
+    const VUE_APP = window.VUE_APP;
+    const { dispatch } = VUE_APP.$store;
     const uQ = Storage.get('uQ');
     request.qq({
       apiName: 'QQ_LIST',
@@ -41,10 +42,10 @@ const request = {
         return;
       }
       if (res.code === 1000) {
-        _this.$message.error('先去qq音乐官网登陆一下吧');
+        VUE_APP.$message.error('先去qq音乐官网登陆一下吧');
         return;
       }
-      _this.$message.success('获取歌单成功～');
+      VUE_APP.$message.success('获取歌单成功～');
       const list = res.data.mydiss.list;
       const myFav = res.data.mymusic[0];
       const id = myFav.id;
@@ -53,16 +54,14 @@ const request = {
       myFav.title = '我喜欢的';
       list.unshift(favTag);
       Storage.set('q_fav_id', id);
-      request.getQQMyFavList(id, uQ, _this, { setPlayNow: true, isFav: true, upShow: true });
+      request.getQQMyFavList(id, uQ, { setPlayNow: true, isFav: true, upShow: true });
       dispatch('setSysTag', list);
       dispatch('updateSelectedTag', id);
-    }, () => {
-      _this.$message.error('获取歌单失败！多半是你输qq号的姿势不对！');
-    });
+    }, () => VUE_APP.$message.error('获取歌单失败！多半是你输qq号的姿势不对！'));
   },
   // 获取我的歌单歌曲列表
-  getQQMyFavList(id, uQ, _this, { setPlayNow, isFav, upShow }, cb) {
-    const { dispatch } = _this.$store;
+  getQQMyFavList(id, uQ, { setPlayNow, isFav, upShow }, cb) {
+    const { dispatch } = window.VUE_APP.$store;
     const allSongs = {};
     isFav = isFav || (id == Storage.get('q_fav_id'));
 
@@ -213,7 +212,40 @@ const request = {
       dispatch('updateAllSongs', allSongs);
       dispatch('updateRadioInfo', radioInfo);
     })
-  }
+  },
+  // qq音乐搜索
+  getQQSearch(val, page = 1) {
+    const VUE_APP = window.VUE_APP;
+    request.qq({
+      apiName: 'QQ_SEARCH',
+      data: { p: page, n: 60, w: val, cr: 1, aggr: 1 },
+    }, (res) => {
+      const allSongs = VUE_APP.$store.getters.getAllSongs;
+      const result = res.data.song.list.map((item) => {
+        const sItem = {
+          from: 'qq',
+          album: item.albumname,
+          albummid: item.albummid,
+          title: item.songname,
+          songmid: item.songmid,
+          artist: item.singer.map(s => s.name).join('/'),
+          objectId: item.songmid,
+          mediamid: item.size128 && item.media_mid, // 避免有的歌曲有id没有音乐
+          cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${item.albummid}.jpg`,
+          size128: item.size128,
+          size320: item.size320,
+          sizeape: item.sizeape,
+          sizeflac: item.sizeflac,
+          songid: item.songid,
+        };
+        allSongs[sItem.objectId] = sItem;
+        return sItem;
+      });
+      VUE_APP.$store.dispatch('updateAllSongs', allSongs);
+      VUE_APP.$store.dispatch('updateShowList', { list: result, more: page !== 1 });
+      VUE_APP.$store.dispatch('changeSearchQuery', { val: val, pageNo: page, total: res.data.song.totalnum });
+    })
+  },
 };
 
 export default request;

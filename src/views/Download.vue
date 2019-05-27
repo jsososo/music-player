@@ -73,7 +73,7 @@
 <script>
   import { mapGetters } from 'vuex';
   import timer from '../assets/utils/timer';
-  import { download, changeUrlQuery } from "../assets/utils/stringHelper";
+  import { changeUrlQuery } from "../assets/utils/stringHelper";
   import Storage from '../assets/utils/Storage';
 
   export default {

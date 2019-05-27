@@ -1,3 +1,6 @@
+// 搜索参数
+export const CHANGE_SEARCH_QUERY = 'CHANGE_SEARCH_QUERY';
+
 // 是否显示评论
 export const CHANGE_SHOW_COMMENT = 'CHANGE_SHOW_COMMENT';
 

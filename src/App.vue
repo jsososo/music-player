@@ -42,7 +42,7 @@
       this.defaultActive = window.location.hash.split('/')[1];
       const uQ = Storage.get('uQ');
       if (uQ) {
-        request.getQQList(this);
+        request.getQQList();
       } else {
         this.$message.info('点右上角头像绑定企鹅号');
       }

@@ -190,12 +190,10 @@
           this.selectedVal[index] = item.selected
         }
       },
-      down(v) {
-        download(v, this);
-      },
+      down: download,
       downAll() {
         this.selectedNum &&
-        Object.keys(this.selectedVal).forEach(i => this.selectedVal[i] && download(this.songList[i].qqInfo, this));
+        Object.keys(this.selectedVal).forEach(i => this.selectedVal[i] && download(this.songList[i].qqInfo));
       },
       add2Dir(song, dir, add) {
         this.$store.dispatch('updateAdd2DirInfo', { song, dir, add })

@@ -1,5 +1,5 @@
 <template>
-  <div :class="`song-list ${selected.len ? 'selecting' : ''}`">
+  <div :class="`song-list ${selected.len ? 'selecting' : ''}`" @scroll="onScroll">
     <div :class="s.mediamid ? (playNow.objectId === s.objectId ? 'song-item playing' : 'song-item') : 'song-item song-empty'"
          v-for="(s, i) in showList"
          :key="`${s.objectId}-${i}`"
@@ -41,8 +41,10 @@
 <script>
   import { mapGetters } from 'vuex';
   import { download, getSongUrl, changeUrlQuery } from "../assets/utils/stringHelper";
+  import request from '../assets/utils/request';
   import Qr from 'qrcode.vue';
   import Storage from '../assets/utils/Storage';
+  import $ from 'jquery';
 
   export default {
     name: "SongList",
@@ -67,6 +69,7 @@
         selected: 'getSelectedSongs',
         searchKey: 'getSearchKey',
         radioInfo: 'getRadioInfo',
+        searchQuery: 'getSearchQuery',
       }),
     },
     methods: {
@@ -95,9 +98,7 @@
           pDom.currentTime = 0;
         }
       },
-      down(v) {
-        download(v, this);
-      },
+      down: download,
       downUrl(v) {
         const info = getSongUrl(v, true);
         const music = changeUrlQuery({}, info[0], false).replace(Storage.get('murl'), '').replace('?', '');
@@ -115,6 +116,21 @@
         selected.val[v] = !selected.val[v];
         selected.len += selected.val[v] ? 1 : -1;
         this.$store.dispatch('updateSelectedSongs', selected);
+      },
+      onScroll(e) {
+        const { searchQuery, searchKey } = this;
+        if (searchKey !== 'QQ音乐') {
+          return;
+        }
+        const { pageNo, total, val, loading } = searchQuery;
+        const el = $('.song-list');
+        const viewH = el.height();//可见高度
+        const contentH = el.get(0).scrollHeight;//内容高度
+        const scrollTop = el.scrollTop();//滚动高度
+        if (contentH - viewH - scrollTop < 150 && pageNo * 60 < total && !loading) {
+          this.$store.dispatch('changeSearchQuery', { val, pageNo, total, loading: true });
+          request.getQQSearch(val, pageNo+1);
+        }
       }
     }
   }

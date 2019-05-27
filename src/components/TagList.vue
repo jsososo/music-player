@@ -51,7 +51,7 @@
         dispatch('updateSelectedTag', id);
         dispatch('setListContent', 0);
         dispatch('changeSearchKey', '列表内');
-        request.getQQMyFavList(id, Storage.get('uQ'), this, { upShow: true });
+        request.getQQMyFavList(id, Storage.get('uQ'), { upShow: true });
       },
       selectRadioTag(id) {
         const { dispatch } = this.$store;

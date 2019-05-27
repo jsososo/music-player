@@ -131,11 +131,12 @@ export function getSongUrl(v, isDown, onlyHigh) {
   }
 }
 
-export function download(v, that, onlyHigh = Storage.get('down-setting-only-high'), repeat = Storage.get('down-setting-repeat')) {
+export function download(v, onlyHigh = Storage.get('down-setting-only-high'), repeat = Storage.get('down-setting-repeat')) {
   if (!v.objectId) {
     return;
   }
-  const dispatch = that.$store.dispatch;
+  const VUE_APP = window.VUE_APP
+  const dispatch = VUE_APP.$store.dispatch;
   if (onlyHigh === '' || repeat === '') {
     return dispatch('updateDownSettingDialog', '您有下载配置还未完善，请先选择（可在下载页修改配置）');
   }
@@ -146,19 +147,19 @@ export function download(v, that, onlyHigh = Storage.get('down-setting-only-high
 
   // 列表内已下载的不再下载了
   if (repeat === '0' &&
-    that.$store.getters.getDownList.list.find(item => item.objectId === v.objectId && item.status === 'success')) {
-    return dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, time, status: 'error', errKey: 'repeat', reason: '已下载过，不再重复下载', that});
+    VUE_APP.$store.getters.getDownList.list.find(item => item.objectId === v.objectId && item.status === 'success')) {
+    return dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, time, status: 'error', errKey: 'repeat', reason: '已下载过，不再重复下载'});
   }
 
   // 仅下载高品质
   if (highLimit) {
-    return dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, time, status: 'error', errKey: 'ONLY_HIGH', reason: '没有高品质的音乐', that});
+    return dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, time, status: 'error', errKey: 'ONLY_HIGH', reason: '没有高品质的音乐'});
   }
 
   down(url, name, null, {
     init: (ajax) => dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, ajax, time, status: 'init' }),
     progress: (...arg) => dispatch('updateDownloadList', { id, status: 'down', progress: { percent: arg[0], loaded: arg[1], total: arg[2] }}),
     success: () => dispatch('updateDownloadList', { id, status: 'success', okTime: new Date().getTime() }),
-    error: () => dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, time, status: 'error', errKey: 'DOWLOAD_ERROR', reason: '下载中出错了', that, downloading: true }),
+    error: () => dispatch('updateDownloadList', { id, name, url, objectId: v.objectId, time, status: 'error', errKey: 'DOWLOAD_ERROR', reason: '下载中出错了', downloading: true }),
   });
 }

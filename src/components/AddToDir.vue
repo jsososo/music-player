@@ -293,7 +293,7 @@
       },
       checkResult(disstid, uQ, u, id) {
         console.log(this.tagInfo.selected.dissid, disstid, this.searchKey)
-        request.getQQMyFavList(disstid, uQ, this,
+        request.getQQMyFavList(disstid, uQ,
           {
             isFav: disstid === this.favList.disstid,
             upShow: this.tagInfo.selected.dissid === disstid && this.searchKey === '列表内'

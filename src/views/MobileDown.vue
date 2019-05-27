@@ -33,7 +33,6 @@
       }
     },
     created() {
-      console.log('created');
       this.query.n = this.query.n.replace(/%2F/ig, '/');
       request.getQQVkey(() => this.getDownLoad())
     },

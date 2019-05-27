@@ -56,5 +56,10 @@ export default {
     },
     isPlay: false, // 是否在播放电台
     show: false, // 是否展示电台
+  },
+  searchQuery: {
+    total: 0,
+    pageNo: 0,
+    val: '',
   }
 };

@@ -287,9 +287,7 @@
       add2Dir(dir, add, fav) {
         this.$store.dispatch('updateAdd2DirInfo', { song: this.playNow, dir, add, fav })
       },
-      down(v) {
-        download(v, this)
-      }
+      down: download,
     }
   }
 </script>

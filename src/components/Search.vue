@@ -46,6 +46,7 @@
         selected: 'getSelectedSongs',
         showList: 'getShowList',
         radioInfo: 'getRadioInfo',
+        searchQuery: 'getSearchQuery',
       }),
     },
     watch: {
@@ -91,33 +92,8 @@
       },
       // 搜索音乐
       searchQQMusic(v) {
-        request.qq({
-          apiName: 'QQ_SEARCH',
-          data: { p: 1, n: 100, w: v, cr: 1, aggr: 1 },
-        }, (res) => {
-          const result = res.data.song.list.map((item) => {
-            const sItem = {
-              from: 'qq',
-              album: item.albumname,
-              albummid: item.albummid,
-              title: item.songname,
-              songmid: item.songmid,
-              artist: item.singer.map(s => s.name).join('/'),
-              objectId: item.songmid,
-              mediamid: item.size128 && item.media_mid, // 避免有的歌曲有id没有音乐
-              cover: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${item.albummid}.jpg`,
-              size128: item.size128,
-              size320: item.size320,
-              sizeape: item.sizeape,
-              sizeflac: item.sizeflac,
-              songid: item.songid,
-            };
-            this.allSongs[sItem.objectId] = sItem;
-            return sItem;
-          });
-          this.$store.dispatch('updateAllSongs', this.allSongs);
-          this.$store.dispatch('updateShowList', { list: result });
-        })
+        this.$store.dispatch('changeSearchQuery', { val: v, pageNo: 1, total: 0, loading: true });
+        request.getQQSearch(v);
       },
       // 批量下载
       downAll() {
@@ -126,7 +102,7 @@
         }
         const list = this.selected.val;
         const allSongs = this.allSongs;
-        Object.keys(list).forEach(k => list[k] && download(allSongs[k], this));
+        Object.keys(list).forEach(k => list[k] && download(allSongs[k]));
       },
       // 全选
       selectAll() {

@@ -4,6 +4,9 @@ import Num from "../assets/utils/num";
 import request from '../assets/utils/request';
 
 export default {
+  [types.CHANGE_SEARCH_QUERY](state, data) {
+    state.searchQuery = data;
+  },
   [types.CHANGE_SHOW_COMMENT](state) {
     state.showComment = !state.showComment;
   },
@@ -49,7 +52,6 @@ export default {
       return;
     }
 
-    const that = data.that;
     delete data.that;
 
     // 更新下载列表，就去找找有没有,如果没找到就直接新增一个
@@ -70,7 +72,7 @@ export default {
         delete state.progress;
         break;
       case 'error':
-        that.$message.error(`下载失败：${data.reason}，可以去下载中心查看设置`);
+        window.VUE_APP.$message.error(`下载失败：${data.reason}，可以去下载中心查看设置`);
         if (data.downloading) {
           state.downloadList.count -= 1;
         }
@@ -95,7 +97,11 @@ export default {
     state.favList = data;
   },
   [types.UPDATE_SHOW_LIST](state, data) {
-    state.showList = data.list;
+    if (data.more) {
+      state.showList = [...state.showList, ...data.list];
+    } else {
+      state.showList = data.list;
+    }
     data.dissid && (state.sysSongs[data.dissid] = state.showList);
   },
   [types.UPDATE_ALL_SONGS](state, data) {
