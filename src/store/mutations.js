@@ -212,6 +212,14 @@ export default {
   },
   [types.UPDATE_PLAYING_STATUS](state, data) {
     state.playing = data;
+    if (data && !state.playingList.length) {
+      if (state.searchKey === 'QQ音乐') {
+        state.playingList = (state.showList || []).filter(item => item.mediamid);
+        state.tagInfo.playing = state.tagInfo.selected;
+      } else if (state.searchKey === '列表内') {
+        state.playingList = (state.sysSongs[state.tagInfo.selected.dissid] || []).filter(item => item.mediamid);
+      }
+    }
   },
   // 更新正在播放的音乐
   [types.UPDATE_PLAY_NOW](state, data) {
