@@ -65,6 +65,15 @@
         list: downList,
       });
 
+      this.$notify({
+        title: '项目迁移预告',
+        dangerouslyUseHTMLString: true,
+        duration: 10000,
+        message: '<div>' +
+        '本项目后期将停止维护，将于 19年7月15日迁移至新域名 <a href="//qq.jsososo.com" target="_blank">qq.jsososo.com</a>，' +
+        '原有域名将用来安放网易云音乐第三方，可以通过 <a href="//163.jsososo.com" target="_blank">163.jsososo.com</a> 提前感受</div>'
+      });
+
       request.getQQRadio(null, this);
     },
     methods: {
