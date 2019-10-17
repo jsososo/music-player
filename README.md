@@ -2,7 +2,7 @@
 
 ## 重点重点重点
 
-这个项目最后走到了尽头，但是音乐是没有尽头的，欢迎大家移步 [NeteaseMusic](https://github.com/jsososo/NeteaseMusic)，基于这个项目改造而来，支持网易云和qq音乐双平台！预览地址：http://music.jsososo.com || http:y.jsososo.com
+这个项目最后走到了尽头，但是音乐是没有尽头的，欢迎大家移步 [NeteaseMusic](https://github.com/jsososo/NeteaseMusic)，基于这个项目改造而来，支持网易云和qq音乐双平台！预览地址：http://music.jsososo.com || http://y.jsososo.com
 
 ## 介绍
 
