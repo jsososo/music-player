@@ -1,5 +1,9 @@
 # Vue 音乐播放器
 
+## 重点重点重点
+
+这个项目最后走到了尽头，但是音乐是没有尽头的，欢迎大家移步 [NeteaseMusic](https://github.com/jsososo/NeteaseMusic)，基于这个项目改造而来，支持网易云和qq音乐双平台！预览地址：http://music.jsososo.com || http:y.jsososo.com
+
 ## 介绍
 
 项目用 vue-cli 3.0 搭建，功能有根据qq号获取歌单、qq音乐的搜索功能、歌词显示、下载等。所有的设置信息均存在 localStorage。
